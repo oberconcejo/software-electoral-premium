@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
 import { Eye, EyeOff, Lock, Mail, ArrowLeft, Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { AppLogo } from '@/src/components/common/AppLogo';
+import { SignIn } from '@clerk/clerk-react';
 import { 
   normalizeModuleCode, 
   getModuleDisplayName, 
@@ -21,6 +22,7 @@ export default function LoginPage() {
   
   const { login } = useAuth();
   
+  const [showClerkFallback, setShowClerkFallback] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -57,6 +59,9 @@ export default function LoginPage() {
         errorMessage = 'Demasiados intentos fallidos. Por favor, espera unos minutos e intenta de nuevo.';
       } else if (errorMessage.includes("Couldn't find your account") || errorMessage.includes("couldn't find your account")) {
         errorMessage = 'No se encontró ninguna cuenta con este correo electrónico.';
+      } else if (errorMessage.includes('Múltiples factores') || errorMessage.includes('needs_second_factor')) {
+        setShowClerkFallback(true);
+        return;
       } else {
         // Fallback para cualquier otro error, agregamos el mensaje original para diagnóstico
         errorMessage = `No se pudo iniciar sesión. (Diagnóstico: ${errorMessage})`;
@@ -67,6 +72,38 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  if (showClerkFallback) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative z-10 w-full max-w-md mx-auto p-4 flex flex-col items-center"
+        >
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">Paso Adicional Requerido</h2>
+            <p className="text-slate-400 text-sm">
+              Tu cuenta requiere verificación en dos pasos u otra acción de seguridad.
+              Por favor, completa el proceso a continuación.
+            </p>
+          </div>
+          <SignIn 
+            routing="hash" 
+            forceRedirectUrl={targetModule === 'ADMINISTRATIVE' ? '/gestion-administrativa/inicio' : `/app/${targetModule.toLowerCase()}`}
+          />
+          <button
+            onClick={() => setShowClerkFallback(false)}
+            className="mt-8 text-slate-400 hover:text-white flex items-center text-sm font-medium transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row">
