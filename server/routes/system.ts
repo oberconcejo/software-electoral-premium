@@ -3,7 +3,7 @@ import { db } from '../../src/db';
 import { profiles, clients } from '../../src/db/schema';
 import { sql } from 'drizzle-orm';
 import { requireAuth } from '@clerk/express';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 const router = Router();
 
@@ -41,7 +41,7 @@ router.post('/setup-admin', requireAuth(), async (req, res) => {
     }
 
     // Create default client
-    const clientId = uuidv4();
+    const clientId = randomUUID();
     await db.insert(clients).values({
       id: clientId,
       name: 'Cliente Principal',
@@ -52,7 +52,7 @@ router.post('/setup-admin', requireAuth(), async (req, res) => {
 
     // Create superadmin profile
     await db.insert(profiles).values({
-      id: uuidv4(),
+      id: randomUUID(),
       clerkId: clerkId,
       clientId: clientId,
       email: email,
