@@ -55,6 +55,8 @@ export default function LoginPage() {
         errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
       } else if (errorMessage.includes('Too many requests')) {
         errorMessage = 'Demasiados intentos fallidos. Por favor, espera unos minutos e intenta de nuevo.';
+      } else if (errorMessage.includes("Couldn't find your account") || errorMessage.includes("couldn't find your account")) {
+        errorMessage = 'No se encontró ninguna cuenta con este correo electrónico.';
       }
       
       setError(errorMessage);
