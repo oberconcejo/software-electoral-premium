@@ -436,6 +436,142 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ROI Calculator */}
+        <section className="py-24 px-6 max-w-5xl mx-auto border-t border-white/5">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, margin: '-60px' }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mb-16 space-y-4"
+          >
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mt-3">
+              Calcula el Impacto en Tu Campaña
+            </h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              Proyecta el ahorro de tiempo y el alcance potencial usando nuestras herramientas.
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white/[0.02] border border-white/5 p-8 md:p-12 rounded-[3rem]">
+            {/* Controles */}
+            <div className="space-y-8">
+              <div>
+                <label className="flex justify-between text-sm font-bold text-slate-300 mb-4">
+                  <span>Votantes Objetivo</span>
+                  <span className="text-indigo-400">50,000</span>
+                </label>
+                <input type="range" min="1000" max="100000" defaultValue="50000" className="w-full accent-indigo-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer" />
+              </div>
+              <div>
+                <label className="flex justify-between text-sm font-bold text-slate-300 mb-4">
+                  <span>Líderes de Territorio</span>
+                  <span className="text-purple-400">120</span>
+                </label>
+                <input type="range" min="10" max="500" defaultValue="120" className="w-full accent-purple-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer" />
+              </div>
+            </div>
+            {/* Resultados */}
+            <div className="space-y-6">
+              <div className="p-6 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-between">
+                <div>
+                  <p className="text-slate-400 text-sm">Horas de gestión ahorradas / mes</p>
+                  <p className="text-3xl font-black text-white">+340 hrs</p>
+                </div>
+                <BarChart3 className="w-10 h-10 text-indigo-500" />
+              </div>
+              <div className="p-6 rounded-2xl bg-purple-600/10 border border-purple-500/20 flex items-center justify-between">
+                <div>
+                  <p className="text-slate-400 text-sm">Aumento de alcance estimado</p>
+                  <p className="text-3xl font-black text-white">28.5%</p>
+                </div>
+                <Target className="w-10 h-10 text-purple-500" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Pasos de Despliegue */}
+        <section className="py-24 px-6 bg-white/[0.02] border-t border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: '-60px' }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="text-center mb-16 space-y-4"
+            >
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight mt-3">
+                Despliegue en 4 Pasos Sencillos
+              </h2>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+              <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-indigo-500/0 via-indigo-500/50 to-purple-500/0"></div>
+              {[
+                { step: "01", title: "Configuración Inicial", desc: "Adaptamos la plataforma a tu estructura política y colores de campaña.", icon: ShieldCheck },
+                { step: "02", title: "Entrenamiento IA", desc: "Cargamos tu plan de gobierno para que el copiloto responda como tú.", icon: Bot },
+                { step: "03", title: "Registro Territorial", desc: "Tus líderes comienzan a mapear simpatizantes en tiempo real.", icon: MapPin },
+                { step: "04", title: "Escrutinio Día D", desc: "Toma el control con recepción de E-14 desde cualquier smartphone.", icon: Vote },
+              ].map((s, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, margin: '-40px' }}
+                  transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative p-8 rounded-[2rem] bg-[#0c0c0c] border border-white/5 space-y-4 text-center z-10 hover:border-indigo-500/30 transition-colors"
+                >
+                  <div className="w-16 h-16 mx-auto rounded-full bg-indigo-600/20 flex items-center justify-center border border-indigo-500/30 text-indigo-400 shadow-lg shadow-indigo-600/20 mb-6">
+                    <s.icon className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold">{s.title}</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">{s.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonios */}
+        <section className="py-24 px-6 max-w-7xl mx-auto border-t border-white/5">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, margin: '-60px' }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mb-16 space-y-4"
+          >
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mt-3">
+              Lo que Dicen Nuestros Clientes
+            </h2>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { quote: "Pasamos de tener 10,000 registros en Excel desorganizados a una base de datos centralizada. La IA nos ahorró semanas de trabajo en comunicaciones.", author: "Director de Campaña", role: "Alcaldía Capital", highlight: "+42% eficiencia" },
+              { quote: "El módulo del Día D nos permitió detectar inconsistencias en 45 mesas antes de que terminara el preconteo oficial. El sistema de OCR es impresionante.", author: "Jefe de Debate", role: "Gobernación", highlight: "Cero fraude" },
+              { quote: "Tener el mapa de calor en vivo nos permitió redirigir recursos en los últimos 3 días a las comunas donde estábamos débiles. Totalmente decisivo.", author: "Candidato", role: "Senado de la República", highlight: "Geolocalización exacta" },
+            ].map((t, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: false, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-6 flex flex-col justify-between"
+              >
+                <div className="space-y-4">
+                  <div className="text-indigo-400"><Star className="w-6 h-6 fill-indigo-400" /></div>
+                  <p className="text-slate-300 italic">"{t.quote}"</p>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">{t.highlight}</div>
+                  <p className="font-bold text-white">{t.author}</p>
+                  <p className="text-xs text-slate-500">{t.role}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
         {/* Comparison Section */}
         <section id="solutions" className="py-24 px-6 max-w-7xl mx-auto border-t border-white/5">
           <motion.div 
@@ -693,6 +829,37 @@ export default function LandingPage() {
               </motion.div>
             ))}
           </div>
+        </section>
+
+        {/* Final CTA Banner */}
+        <section className="py-24 px-6 max-w-5xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, margin: '-40px' }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="p-12 md:p-16 rounded-[3rem] bg-gradient-to-br from-indigo-900/40 via-purple-900/40 to-[#080808] border border-indigo-500/20 text-center relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+            <div className="relative z-10 space-y-8">
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+                ¿Listo para Llevar Tu Campaña al Siguiente Nivel?
+              </h2>
+              <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+                Únete a los líderes que ya están usando la inteligencia artificial y la gestión de datos para asegurar su victoria electoral.
+              </p>
+              <div className="pt-4">
+                <motion.button 
+                  whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(79, 70, 229, 0.5)' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate('/solicitar-acceso')}
+                  className="px-10 py-5 rounded-full bg-indigo-600 text-white font-black text-lg transition-all"
+                >
+                  Agendar Demostración Ahora
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
         </section>
       </main>
 
