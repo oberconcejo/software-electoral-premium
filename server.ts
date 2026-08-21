@@ -3140,17 +3140,30 @@ Responde ÚNICAMENTE con un JSON válido con esta estructura:
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  // Export app for Vercel Serverless instead of listening
+  return app;
+}
+
+// In local environment, we can start the server normally.
+// For Vercel, we export the app.
+let appInstance: any;
+
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  startServer().then(app => {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
   });
 }
 
-startServer();
+// For Vercel Serverless function support
+export default async function (req: any, res: any) {
+  if (!appInstance) {
+    appInstance = await startServer();
+  }
+  return appInstance(req, res);
+}
+
