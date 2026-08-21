@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/contexts/AuthContext';
+import { apiClient } from '@/src/lib/apiClient';
 import { 
   CustomRole, 
   Leader, 
@@ -125,7 +126,6 @@ export function useAdministrativeData() {
       // 8. Fetch Jurors from Express API
       let jurorsData: any[] = [];
       try {
-        const { apiClient } = await import('@/src/lib/apiClient');
         const apiJurors = await apiClient.get<any[]>('/api/administrative/jurors');
         // Mapear los campos de Drizzle al tipo esperado en frontend
         jurorsData = apiJurors.map((j: any) => ({
