@@ -1,4 +1,6 @@
 import { apiClient } from '@/src/lib/apiClient';
+import { CacheManager } from '@/src/lib/cacheManager';
+import { supabase } from '@/src/lib/supabase';
 import { CitizenPollingPlace, PollingStationQueryRecord } from '@/src/types';
 import { ParsedExcelRow } from '@/src/utils/excelPollingUtils';
 

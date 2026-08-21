@@ -103,7 +103,7 @@ export default function AdminLeadersVotersPage() {
           );
           if (match) {
             matchedZoneId = match.id;
-            refreshSubdivisions(match.id);
+            refreshSubdivisions();
           }
         }
 
@@ -136,7 +136,7 @@ export default function AdminLeadersVotersPage() {
     }
     
     if (zoneId) {
-      refreshSubdivisions(zoneId);
+      refreshSubdivisions();
     }
   };
 

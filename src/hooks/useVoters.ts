@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useQueryCache } from '@/src/hooks/useQueryCache';
-import { CacheManager } from '@/src/lib/cache/CacheManager';
+import { CacheManager } from '@/src/lib/cacheManager';
 
 export interface Voter {
   id: string;

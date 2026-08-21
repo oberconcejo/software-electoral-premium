@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useGlobalApp } from '@/src/contexts/GlobalAppContext';
-import { useAuth } from '@/src/contexts/AuthContext';
 
 export interface CandidateProfile {
   id?: string;

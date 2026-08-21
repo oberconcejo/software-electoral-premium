@@ -398,9 +398,7 @@ export default function AdminCampaignPage() {
         descripcion: form.descripcion.trim()
       };
 
-      const { error } = await apiClient.post('/api/campaigns', [campaignToSave]);
-
-      if (error) throw error;
+      await apiClient.post('/api/campaigns', [campaignToSave]);
 
       setMessage({ text: 'Campaña creada con éxito', type: 'success' });
       await refresh();
