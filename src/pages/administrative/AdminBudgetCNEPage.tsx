@@ -24,6 +24,7 @@ import {
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useAdministrativeData } from '@/src/hooks/useAdministrativeData';
 import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 
 // CNE official codes mapping
 const CNE_RUBROS_MAP: Record<string, { name: string; tipo: 'INGRESO' | 'GASTO' }> = {
@@ -190,7 +191,7 @@ export default function AdminBudgetCNEPage() {
         const dept = newJurisdiction.includes(',') ? newJurisdiction.split(',')[1].trim() : 'Antioquia';
         const mun = newJurisdiction.includes(',') ? newJurisdiction.split(',')[0].trim() : newJurisdiction;
         
-        await supabase.from('campaigns').insert({
+        await apiClient.post('/api/campaigns', {
           client_id: tenantId,
           nombre: newName,
           candidato_nombre: user?.displayName || 'Candidato Oficial',
@@ -235,9 +236,9 @@ export default function AdminBudgetCNEPage() {
     // Optimistic Local Update
     setLocalMovements([newMovement, ...localMovements]);
 
-    if (supabase && tenantId) {
+    if (tenantId) {
       try {
-        await supabase.from('budget_items').insert({
+        await apiClient.post('/api/budget', {
           client_id: tenantId,
           campaign_id: activeCampaign?.id || null,
           tipo: CNE_RUBROS_MAP[form.code]?.tipo,
@@ -335,9 +336,9 @@ export default function AdminBudgetCNEPage() {
     // Optimistic Update
     setLocalMovements([newMovement, ...localMovements]);
 
-    if (supabase && tenantId) {
+    if (tenantId) {
       try {
-        await supabase.from('budget_items').insert({
+        await apiClient.post('/api/budget', {
           client_id: tenantId,
           campaign_id: activeCampaign?.id || null,
           tipo: 'GASTO',
@@ -364,13 +365,11 @@ export default function AdminBudgetCNEPage() {
     // Optimistic Local Delete
     setLocalMovements(prev => prev.filter(x => x.id !== mId));
 
-    if (supabase) {
-      try {
-        await supabase.from('budget_items').delete().eq('id', mId);
-        refresh();
-      } catch (err) {
-        console.error('Error deleting budget item:', err);
-      }
+    try {
+      await apiClient.delete(`/api/budget/${mId}`);
+      refresh();
+    } catch (err) {
+      console.error('Error deleting budget item:', err);
     }
   };
 

@@ -75,82 +75,42 @@ export function useAdministrativeData() {
       const clientId = user?.tenantId || client?.id;
 
       // 1. Fetch Users / Profiles
-      let usersQuery = supabase.from('profiles').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        usersQuery = usersQuery.eq('client_id', clientId);
-      }
-      const { data: usersData, error: usersErr } = await usersQuery;
+      let usersData: any[] = [];
+      try { usersData = await apiClient.get<any[]>('/api/roles/profiles'); } catch (e) {}
 
       // 2. Fetch Custom Roles
-      let rolesQuery = supabase.from('custom_roles').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        rolesQuery = rolesQuery.eq('client_id', clientId);
-      }
-      const { data: rolesData } = await rolesQuery;
+      let rolesData: any[] = [];
+      try { rolesData = await apiClient.get<any[]>('/api/roles'); } catch (e) {}
 
       // 3. Fetch Leaders
-      let leadersQuery = supabase.from('leaders').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        leadersQuery = leadersQuery.eq('client_id', clientId);
-      }
-      const { data: leadersData } = await leadersQuery;
+      let leadersData: any[] = [];
+      try { leadersData = await apiClient.get<any[]>('/api/voters/leaders'); } catch (e) {}
 
       // 4. Fetch Voters
-      let votersQuery = supabase.from('voters').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        votersQuery = votersQuery.eq('client_id', clientId);
-      }
-      const { data: votersData } = await votersQuery;
+      let votersData: any[] = [];
+      try { votersData = await apiClient.get<any[]>('/api/voters/voters'); } catch (e) {}
 
       // 5. Fetch Budget Items
-      let budgetQuery = supabase.from('budget_items').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        budgetQuery = budgetQuery.eq('client_id', clientId);
-      }
-      const { data: budgetData } = await budgetQuery;
+      let budgetData: any[] = [];
+      try { budgetData = await apiClient.get<any[]>('/api/budget'); } catch (e) {}
 
       // 6. Fetch Campaigns
-      let campaignsQuery = supabase.from('campaigns').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        campaignsQuery = campaignsQuery.eq('client_id', clientId);
-      }
-      const { data: campaignsData } = await campaignsQuery;
+      let campaignsData: any[] = [];
+      try { campaignsData = await apiClient.get<any[]>('/api/campaigns'); } catch (e) {}
 
       // 7. Fetch Witnesses
-      let witnessesQuery = supabase.from('witnesses').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        witnessesQuery = witnessesQuery.eq('client_id', clientId);
-      }
-      const { data: witnessesData } = await witnessesQuery;
+      let witnessesData: any[] = [];
+      try { witnessesData = await apiClient.get<any[]>('/api/witnesses'); } catch (e) {}
 
-      // 8. Fetch Jurors from Express API
+      // 8. Fetch Jurors
       let jurorsData: any[] = [];
-      try {
-        const apiJurors = await apiClient.get<any[]>('/api/administrative/jurors');
-        // Mapear los campos de Drizzle al tipo esperado en frontend
-        jurorsData = apiJurors.map((j: any) => ({
-          id: j.id,
-          client_id: j.clientId,
-          cedula: j.cedula,
-          nombre: j.nombreCompleto,
-          telefono: j.telefono,
-          puesto: j.puestoAsignado,
-          mesa: j.mesaAsignada,
-          cargo: j.estado || 'VOCAL 1', // Drizzle uses 'estado', fallback
-          observaciones: '' // Not stored in Drizzle yet
-        }));
-      } catch (err) {
-        console.warn('Error fetching jurors from API:', err);
-      }
+      try { jurorsData = await apiClient.get<any[]>('/api/jurors'); } catch (e) {}
 
       // 9. Fetch Surveys
-      let surveysQuery = supabase.from('surveys').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        surveysQuery = surveysQuery.eq('client_id', clientId);
-      }
-      const { data: surveysData } = await surveysQuery;
+      let surveysData: any[] = [];
+      try { surveysData = await apiClient.get<any[]>('/api/surveys'); } catch (e) {}
 
-      // 10. Fetch API Usage
+      // 10. Fetch API Usage (Keep Supabase temporarily or mock if missing API)
       let usageData = null;
       if (clientId) {
         try {
@@ -162,66 +122,62 @@ export function useAdministrativeData() {
           
           if (!usageError) {
             usageData = usage;
-          } else {
-            console.warn('API usage table not found or error fetching:', usageError.message);
           }
-        } catch (e) {
-          console.warn('Error querying client_api_usage:', e);
-        }
+        } catch (e) {}
       }
 
       // Map Users
       const mappedUsers: User[] = (usersData || []).map(u => ({
         id: u.id,
         email: u.email,
-        displayName: u.display_name || u.email.split('@')[0],
+        displayName: u.displayName || u.email?.split('@')[0] || 'Unknown',
         role: u.role,
         status: u.status || 'ACTIVE',
-        tenantId: u.client_id,
-        allowedModules: u.allowed_modules || []
+        tenantId: u.clientId,
+        allowedModules: u.allowedModules || []
       }));
       setSubusers(mappedUsers);
 
       // Map Roles
       const mappedRoles: CustomRole[] = (rolesData || []).map(r => ({
         id: r.id,
-        clientId: r.client_id,
+        clientId: r.clientId,
         name: r.name,
         code: r.code,
         description: r.description,
-        isActive: r.is_active !== false,
-        isSystem: r.is_system || false,
-        allowedModules: r.allowed_modules || ['ADMINISTRATIVE'],
-        createdAt: r.created_at
+        isActive: r.isActive !== false,
+        isSystem: r.isSystem || false,
+        allowedModules: r.allowedModules || ['ADMINISTRATIVE'],
+        createdAt: r.createdAt
       }));
       setRoles(mappedRoles);
 
       // Map Leaders
       const mappedLeaders: Leader[] = (leadersData || []).map(l => ({
         id: l.id,
-        clientId: l.client_id,
-        nombre: l.nombre,
+        clientId: l.clientId,
+        nombre: l.nombreCompleto,
         cedula: l.cedula,
         telefono: l.telefono,
         email: l.email,
         comuna: l.comuna,
         barrio: l.barrio,
-        zoneId: l.zone_id,
-        subdivisionId: l.subdivision_id,
+        zoneId: l.zoneId,
+        subdivisionId: l.subdivisionId,
         puesto: l.puesto,
         mesa: l.mesa,
-        metaVotos: Number(l.meta_votos) || 50,
-        votosComprometidos: Number(l.votos_comprometidos) || 0,
-        status: l.status || 'ACTIVE',
-        createdAt: l.created_at
+        metaVotos: Number(l.metaVotos) || 50,
+        votosComprometidos: Number(l.votosAsegurados) || 0,
+        status: l.estado || 'ACTIVE',
+        createdAt: l.createdAt
       }));
       setLeaders(mappedLeaders);
 
       // Map Voters
       const mappedVoters: Voter[] = (votersData || []).map(v => ({
         id: v.id,
-        clientId: v.client_id,
-        nombre: v.nombre,
+        clientId: v.clientId,
+        nombre: v.nombreCompleto,
         cedula: v.cedula,
         telefono: v.telefono,
         email: v.email,
@@ -229,105 +185,105 @@ export function useAdministrativeData() {
         municipio: v.municipio,
         comuna: v.comuna,
         barrio: v.barrio,
-        zoneId: v.zone_id,
-        subdivisionId: v.subdivision_id,
-        puesto: v.puesto,
+        zoneId: v.zoneId,
+        subdivisionId: v.subdivisionId,
+        puesto: v.puestoVotacion,
         mesa: v.mesa,
-        liderId: v.lider_id,
+        liderId: v.liderId,
         intencion: v.intencion || 'Voto Seguro',
         status: v.status || 'ACTIVE',
-        createdAt: v.created_at
+        createdAt: v.createdAt
       }));
       setVoters(mappedVoters);
 
       // Map Budget Items
       const mappedBudget: BudgetItem[] = (budgetData || []).map(b => ({
         id: b.id,
-        clientId: b.client_id,
-        campaignId: b.campaign_id,
+        clientId: b.clientId,
+        campaignId: b.campaignId,
         tipo: b.tipo,
-        categoriaCNE: b.categoria_cne,
+        categoriaCNE: b.categoriaCNE,
         concepto: b.concepto,
         monto: Number(b.monto) || 0,
         fecha: b.fecha,
-        comprobanteNumero: b.comprobante_numero,
-        soporteUrl: b.soporte_url,
-        beneficiarioNombre: b.beneficiario_nombre,
-        beneficiarioNit: b.beneficiario_nit,
+        comprobanteNumero: b.comprobanteNumero,
+        soporteUrl: b.soporteUrl,
+        beneficiarioNombre: b.beneficiarioNombre,
+        beneficiarioNit: b.beneficiarioNit,
         estado: b.estado || 'REGISTRADO',
         observaciones: b.observaciones,
-        createdAt: b.created_at
+        createdAt: b.createdAt
       }));
       setBudgetItems(mappedBudget);
 
       // Map Campaigns
       const mappedCampaigns: CampaignData[] = (campaignsData || []).map(c => ({
         id: c.id,
-        clientId: c.client_id,
+        clientId: c.clientId,
         nombre: c.nombre,
-        candidatoNombre: c.candidato_nombre,
-        cargoPostulacion: c.cargo_postulacion,
+        candidatoNombre: c.candidatoNombre,
+        cargoPostulacion: c.cargoPostulacion,
         departamento: c.departamento,
         municipio: c.municipio,
         circunscripcion: c.circunscripcion,
-        fechaInicio: c.fecha_inicio,
-        fechaEleccion: c.fecha_eleccion,
-        metaVotos: Number(c.meta_votos) || 0,
-        presupuestoTotal: Number(c.presupuesto_total) || 0,
+        fechaInicio: c.fechaInicio,
+        fechaEleccion: c.fechaEleccion,
+        metaVotos: Number(c.metaVotos) || 0,
+        presupuestoTotal: Number(c.presupuestoTotal) || 0,
         estado: c.estado || 'ACTIVA',
         descripcion: c.descripcion,
-        createdAt: c.created_at
+        createdAt: c.createdAt
       }));
       setCampaigns(mappedCampaigns);
 
       // Map Witnesses
       const mappedWitnesses: Witness[] = (witnessesData || []).map(w => ({
         id: w.id,
-        clientId: w.client_id,
-        nombre: w.nombre,
+        clientId: w.clientId,
+        nombre: w.nombreCompleto,
         cedula: w.cedula,
         telefono: w.telefono,
         email: w.email,
         municipio: w.municipio,
         zona: w.zona,
-        puesto: w.puesto,
+        puesto: w.puestoVotacion,
         mesa: w.mesa,
         estado: w.estado || 'PENDIENTE',
-        documentoSoporteUrl: w.documento_soporte_url,
+        documentoSoporteUrl: w.documentoSoporteUrl,
         observaciones: w.observaciones,
-        createdAt: w.created_at
+        createdAt: w.createdAt
       }));
       setWitnesses(mappedWitnesses);
 
       // Map Jurors
       const mappedJurors: Juror[] = (jurorsData || []).map(j => ({
         id: j.id,
-        clientId: j.client_id,
-        nombre: j.nombre,
+        clientId: j.clientId,
+        nombre: j.nombreCompleto,
         cedula: j.cedula,
         telefono: j.telefono,
         municipio: j.municipio,
-        puesto: j.puesto,
-        mesa: j.mesa,
+        puesto: j.puestoAsignado,
+        mesa: j.mesaAsignada,
         cargo: j.cargo || 'VOCAL',
         afinidad: j.afinidad || 'NEUTRO',
         observaciones: j.observaciones,
-        createdAt: j.created_at
+        createdAt: j.createdAt
       }));
       setJurors(mappedJurors);
 
       // Map Surveys
       const mappedSurveys: Survey[] = (surveysData || []).map(s => ({
         id: s.id,
-        clientId: s.client_id,
+        clientId: s.clientId,
         titulo: s.titulo,
         descripcion: s.descripcion,
-        fechaInicio: s.fecha_inicio,
-        fechaFin: s.fecha_fin,
-        muestraObjetivo: Number(s.muestra_objetivo) || 200,
+        fechaInicio: s.fechaInicio,
+        fechaFin: s.fechaFin,
+        muestraObjetivo: Number(s.muestraObjetivo) || 200,
         estado: s.estado || 'ACTIVA',
         preguntas: Array.isArray(s.preguntas) ? s.preguntas : [],
-        createdAt: s.created_at
+        createdAt: s.createdAt
       }));
       setSurveys(mappedSurveys);
 

@@ -20,6 +20,7 @@ import {
   Briefcase
 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useAdministrativeData } from '@/src/hooks/useAdministrativeData';
 import { UserRole, Permission, User } from '@/src/types';
@@ -358,16 +359,16 @@ export default function AdminRolesPage() {
         : [selectedModule];
 
       // Insert profile in Supabase profiles
-      const { data, error } = await supabase.from('profiles').insert([
-        {
+      const error = null;
+      let data = null;
+      try { data = await apiClient.post('/api/roles/profiles', {
           client_id: clientId,
           display_name: fullName,
           email: email.trim().toLowerCase(),
           role: selectedRole,
           status: isActiveStatus ? 'ACTIVE' : 'INACTIVE',
           allowed_modules: modules
-        }
-      ]).select().single();
+        }); } catch (e) { console.error(e); }
 
       if (error) throw error;
 

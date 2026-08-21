@@ -65,6 +65,7 @@ export const voters = pgTable('voters', {
   cedula: text('cedula').unique().notNull(),
   nombreCompleto: text('nombre_completo').notNull(),
   telefono: text('telefono'),
+  email: text('email'),
   direccion: text('direccion'),
   departamento: text('departamento'),
   municipio: text('municipio'),
@@ -73,7 +74,10 @@ export const voters = pgTable('voters', {
   puestoVotacion: text('puesto_votacion'),
   mesa: text('mesa'),
   liderId: uuid('lider_id'),
+  liderNombre: text('lider_nombre'),
+  intencion: text('intencion').default('Indeciso'), // 'Voto Seguro' | 'Probable' | 'Indeciso' | 'En Contra'
   estadoValidacion: text('estado_validacion').default('PENDIENTE'),
+  status: text('status').default('ACTIVE'), // 'ACTIVE' | 'INACTIVE'
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
@@ -83,10 +87,15 @@ export const leaders = pgTable('leaders', {
   cedula: text('cedula').unique().notNull(),
   nombreCompleto: text('nombre_completo').notNull(),
   telefono: text('telefono'),
+  email: text('email'),
+  comuna: text('comuna'),
+  barrio: text('barrio'),
+  puesto: text('puesto'),
+  mesa: text('mesa'),
   zonaInfluencia: text('zona_influencia'),
   metaVotos: integer('meta_votos').default(0),
   votosAsegurados: integer('votos_asegurados').default(0),
-  estado: text('estado').default('ACTIVO'),
+  estado: text('estado').default('ACTIVO'), // 'ACTIVO' | 'INACTIVO'
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
@@ -96,10 +105,14 @@ export const jurors = pgTable('jurors', {
   cedula: text('cedula').unique().notNull(),
   nombreCompleto: text('nombre_completo').notNull(),
   telefono: text('telefono'),
+  municipio: text('municipio'),
   puestoAsignado: text('puesto_asignado'),
   mesaAsignada: text('mesa_asignada'),
   estado: text('estado').default('PENDIENTE'),
   asistencia: boolean('asistencia').default(false),
+  cargo: text('cargo').default('VOCAL'), // PRESIDENTE | VICEPRESIDENTE | VOCAL | REMANENTE
+  afinidad: text('afinidad').default('DESCONOCIDO'),
+  observaciones: text('observaciones'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
@@ -109,9 +122,58 @@ export const witnesses = pgTable('witnesses', {
   cedula: text('cedula').unique().notNull(),
   nombreCompleto: text('nombre_completo').notNull(),
   telefono: text('telefono'),
-  puestoVotacion: text('puesto_votacion'),
+  email: text('email'),
+  municipio: text('municipio'),
   zona: text('zona'),
+  puestoVotacion: text('puesto_votacion'),
+  mesa: text('mesa'),
   estado: text('estado').default('ACTIVO'),
+  documentoSoporteUrl: text('documento_soporte_url'),
+  observaciones: text('observaciones'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const budgetItems = pgTable('budget_items', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id),
+  campaignId: uuid('campaign_id').references(() => campaigns.id, { onDelete: 'set null' }),
+  tipo: text('tipo').notNull(), // 'INGRESO' | 'GASTO'
+  categoriaCNE: text('categoria_cne').notNull(),
+  concepto: text('concepto').notNull(),
+  monto: numeric('monto', { precision: 15, scale: 2 }).notNull().default('0'),
+  fecha: timestamp('fecha').defaultNow(),
+  comprobanteNumero: text('comprobante_numero'),
+  soporteUrl: text('soporte_url'),
+  beneficiarioNombre: text('beneficiario_nombre'),
+  beneficiarioNit: text('beneficiario_nit'),
+  estado: text('estado').default('REGISTRADO'),
+  observaciones: text('observaciones'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const surveys = pgTable('surveys', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id),
+  titulo: text('titulo').notNull(),
+  descripcion: text('descripcion'),
+  fechaInicio: timestamp('fecha_inicio').defaultNow(),
+  fechaFin: timestamp('fecha_fin'),
+  muestraObjetivo: integer('muestra_objetivo').default(0),
+  respuestasCount: integer('respuestas_count').default(0),
+  estado: text('estado').default('BORRADOR'), // 'BORRADOR' | 'ACTIVA' | 'CERRADA'
+  preguntas: jsonb('preguntas').default('[]'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const customRoles = pgTable('custom_roles', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id),
+  name: text('name').notNull(),
+  code: text('code').notNull(),
+  description: text('description'),
+  isActive: boolean('is_active').default(true),
+  isSystem: boolean('is_system').default(false),
+  allowedModules: text('allowed_modules').array().default(sql`ARRAY[]::text[]`),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 

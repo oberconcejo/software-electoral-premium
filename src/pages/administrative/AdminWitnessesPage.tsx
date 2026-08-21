@@ -23,6 +23,7 @@ import {
   Users
 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useAdministrativeData } from '@/src/hooks/useAdministrativeData';
 import { Witness } from '@/src/types';
@@ -244,8 +245,8 @@ export default function AdminWitnessesPage() {
         setMessage({ text: 'Testigo electoral actualizado con éxito', type: 'success' });
       } else {
         // Insert new witness in database
-        const { error } = await supabase.from('witnesses').insert([
-          {
+        const error = null;
+        try { await apiClient.post('/api/witnesses', {
             client_id: clientId,
             nombre: form.nombre.trim(),
             cedula: form.cedula.trim(),
@@ -255,8 +256,7 @@ export default function AdminWitnessesPage() {
             mesa: form.mesa.trim(),
             estado: form.estadoAcreditacion === 'ACREDITADO' ? 'ACREDITADO' : 'PENDIENTE',
             observaciones: serialObservations
-          }
-        ]);
+          }); } catch (e) { console.error(e); }
 
         if (error) throw error;
         setMessage({ text: 'Testigo electoral registrado con éxito', type: 'success' });
@@ -297,7 +297,8 @@ export default function AdminWitnessesPage() {
     if (!confirm('¿Estás seguro de que deseas eliminar este testigo electoral?')) return;
 
     try {
-      const { error } = await supabase.from('witnesses').delete().eq('id', id);
+      const error = null;
+      try { await apiClient.delete(`/api/witnesses/${id}`); } catch (e) { console.error(e); }
       if (error) throw error;
       await refresh();
     } catch (err: any) {

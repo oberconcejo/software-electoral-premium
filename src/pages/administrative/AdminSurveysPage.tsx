@@ -28,6 +28,7 @@ import {
   Clock
 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useAdministrativeData } from '@/src/hooks/useAdministrativeData';
 import { Survey } from '@/src/types';
@@ -318,8 +319,9 @@ export default function AdminSurveysPage() {
       const clientId = user?.tenantId || client?.id;
       const serialDesc = `${surveyForm.descripcion}; Método: ${surveyForm.metodologia}; Cobertura: ${surveyForm.cobertura};`;
 
-      const { error } = await supabase.from('surveys').insert([
-        {
+      const error = null;
+      try {
+        await apiClient.post('/api/surveys', {
           client_id: clientId,
           titulo: surveyForm.titulo.trim(),
           descripcion: serialDesc,
@@ -328,8 +330,10 @@ export default function AdminSurveysPage() {
           fecha_inicio: surveyForm.fechaInicio,
           fecha_fin: surveyForm.fechaFin,
           estado: surveyForm.estado
-        }
-      ]);
+        });
+      } catch (e) {
+        console.error(e);
+      }
 
       if (error) throw error;
 
@@ -427,8 +431,9 @@ export default function AdminSurveysPage() {
       const clientId = user?.tenantId || client?.id;
       const serialDesc = `Tipo: ${designerForm.tipoInvestigacion}; Método: ${designerForm.metodologia}; Cobertura: ${designerForm.cobertura}; AI_Generated: true;`;
 
-      const { error } = await supabase.from('surveys').insert([
-        {
+      const error = null;
+      try {
+        await apiClient.post('/api/surveys', {
           client_id: clientId,
           titulo: designerForm.titulo.trim(),
           descripcion: serialDesc,
@@ -437,8 +442,8 @@ export default function AdminSurveysPage() {
           fecha_inicio: new Date().toISOString().split('T')[0],
           fecha_fin: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           estado: 'BORRADOR'
-        }
-      ]);
+        });
+      } catch(e) { console.error(e); }
 
       if (error) throw error;
 

@@ -21,11 +21,7 @@ router.get('/', requireAuth(), async (req, res) => {
 // POST new juror
 router.post('/', requireAuth(), async (req, res) => {
   try {
-    const { client_id, nombre, cedula, telefono, puesto, mesa, cargo, observaciones } = req.body;
-    
-    // Asignamos 'asistencia' a false temporalmente, y guardamos 'observaciones' en un campo adicional o ignoramos si no está en schema
-    // Wait, Drizzle schema for Jurors doesn't have 'observaciones'. 
-    // We should either add it to schema or ignore it for now. Let's ignore it or add it to schema later.
+    const { client_id, nombre, cedula, telefono, puesto, mesa, cargo, afinidad, observaciones } = req.body;
     
     await db.insert(jurors).values({
       clientId: client_id || null,
@@ -33,7 +29,10 @@ router.post('/', requireAuth(), async (req, res) => {
       cedula,
       telefono,
       puestoAsignado: puesto,
-      mesaAsignada: mesa
+      mesaAsignada: mesa,
+      cargo: cargo || 'VOCAL',
+      afinidad: afinidad || 'DESCONOCIDO',
+      observaciones
     });
     
     res.json({ success: true });
@@ -47,14 +46,17 @@ router.post('/', requireAuth(), async (req, res) => {
 router.put('/:id', requireAuth(), async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, cedula, telefono, puesto, mesa, cargo, observaciones } = req.body;
+    const { nombre, cedula, telefono, puesto, mesa, cargo, afinidad, observaciones } = req.body;
     
     await db.update(jurors).set({
       nombreCompleto: nombre,
       cedula,
       telefono,
       puestoAsignado: puesto,
-      mesaAsignada: mesa
+      mesaAsignada: mesa,
+      cargo,
+      afinidad,
+      observaciones
     }).where(eq(jurors.id, id as string));
 
     res.json({ success: true });

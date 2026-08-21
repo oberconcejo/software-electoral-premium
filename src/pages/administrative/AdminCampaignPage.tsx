@@ -26,6 +26,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useAdministrativeData } from '@/src/hooks/useAdministrativeData';
 import { CampaignData } from '@/src/types';
@@ -397,7 +398,7 @@ export default function AdminCampaignPage() {
         descripcion: form.descripcion.trim()
       };
 
-      const { error } = await supabase.from('campaigns').insert([campaignToSave]);
+      const { error } = await apiClient.post('/api/campaigns', [campaignToSave]);
 
       if (error) throw error;
 

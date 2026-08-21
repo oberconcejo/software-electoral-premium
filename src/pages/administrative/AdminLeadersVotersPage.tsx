@@ -22,6 +22,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useAdministrativeData } from '@/src/hooks/useAdministrativeData';
 import { useTerritory } from '@/src/hooks/useTerritory';
@@ -261,8 +262,8 @@ export default function AdminLeadersVotersPage() {
       const selectedZone = zones.find(z => z.id === voterForm.zoneId);
       const selectedSub = subdivisions.find(s => s.id === voterForm.subdivisionId);
 
-      const { error } = await supabase.from('voters').insert([
-        {
+      const error = null;
+      try { await apiClient.post('/api/voters/voters', {
           client_id: clientId,
           nombre: voterForm.nombre.trim(),
           cedula: voterForm.cedula.trim(),
@@ -277,8 +278,7 @@ export default function AdminLeadersVotersPage() {
           lider_id: voterForm.liderId ? voterForm.liderId : null,
           intencion: voterForm.intencion,
           status: 'ACTIVE'
-        }
-      ]);
+        }); } catch (e) { console.error(e); }
 
       if (error) throw error;
 

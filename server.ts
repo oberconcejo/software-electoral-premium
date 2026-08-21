@@ -124,6 +124,28 @@ async function startServer() {
   const jurorsRoutes = (await import('./server/routes/jurors')).default;
   app.use('/api/administrative/jurors', jurorsRoutes);
 
+  const witnessesRoutes = (await import('./server/routes/witnesses')).default;
+  app.use('/api/administrative/witnesses', witnessesRoutes);
+
+  const campaignsRoutes = (await import('./server/routes/campaigns')).default;
+  app.use('/api/administrative/campaigns', campaignsRoutes);
+
+  const votersRoutes = (await import('./server/routes/voters')).default;
+  app.use('/api/administrative/voters', votersRoutes);
+
+  const surveysRoutes = (await import('./server/routes/surveys')).default;
+  app.use('/api/administrative/surveys', surveysRoutes);
+
+  const budgetRoutes = (await import('./server/routes/budget')).default;
+  app.use('/api/administrative/budget', budgetRoutes);
+
+  const rolesRoutes = (await import('./server/routes/roles')).default;
+  app.use('/api/administrative/roles', rolesRoutes);
+
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok' });
+  });
+
   // Rutas de Autenticación / Perfil
   app.get('/api/auth/me', requireAuth(), async (req, res) => {
     try {

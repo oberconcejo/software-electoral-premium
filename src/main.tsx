@@ -7,6 +7,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
+import { esES } from '@clerk/localizations';
 import { AuthProvider } from '@/src/contexts/AuthContext';
 import App from './App.tsx';
 import './index.css';
@@ -19,7 +20,7 @@ if (!clerkPubKey) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={clerkPubKey}>
+    <ClerkProvider publishableKey={clerkPubKey} localization={esES}>
       <BrowserRouter>
         <AuthProvider>
           <App />

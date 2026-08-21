@@ -20,6 +20,7 @@ import {
   Power
 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useAdministrativeData } from '@/src/hooks/useAdministrativeData';
 import { UserRole } from '@/src/types';
@@ -96,8 +97,9 @@ export default function AdminSettingsPage() {
 
       // Create profile in Supabase profiles table
       const newUserId = crypto.randomUUID();
-      const { error } = await supabase.from('profiles').insert([
-        {
+      const error = null;
+      try {
+        await apiClient.post('/api/roles/profiles', {
           id: newUserId,
           client_id: clientId,
           display_name: userForm.displayName.trim(),
@@ -107,8 +109,10 @@ export default function AdminSettingsPage() {
           custom_role_id: userForm.customRoleId || null,
           allowed_modules: userForm.assignedModules,
           is_active: true
-        }
-      ]);
+        });
+      } catch (e) {
+        console.error(e);
+      }
 
       if (error) throw error;
 
