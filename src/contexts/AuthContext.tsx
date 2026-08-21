@@ -134,7 +134,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading: false,
         error: null,
         isDatabaseConfigured: true,
-        sessionToken: token
+        sessionToken: token,
+        isSystemReady: true
       }));
 
       return result;
@@ -206,7 +207,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           allowedModules: ['ADMINISTRATIVE', 'CRM', 'STRATEGY', 'TERRITORY', 'ELECTORAL', 'COMMUNICATIONS', 'ANALYSIS'] as CanonicalModuleCode[]
         };
       } else {
-        throw new Error(`Múltiples factores o paso adicional requerido. Estado actual: ${result.status}. Por favor verifica la configuración de Clerk.`);
+        throw new Error(`Múltiples factores o paso adicional requerido. Estado actual: ${result.status}. Factores soportados: ${JSON.stringify(result.supportedSecondFactors)}. Por favor verifica la configuración de Clerk.`);
       }
     } catch (err: any) {
       const errorMessage = err.errors?.[0]?.longMessage || err.message || 'Error al iniciar sesión';
