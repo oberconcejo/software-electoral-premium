@@ -57,6 +57,9 @@ export default function LoginPage() {
         errorMessage = 'Demasiados intentos fallidos. Por favor, espera unos minutos e intenta de nuevo.';
       } else if (errorMessage.includes("Couldn't find your account") || errorMessage.includes("couldn't find your account")) {
         errorMessage = 'No se encontró ninguna cuenta con este correo electrónico.';
+      } else {
+        // Fallback para cualquier otro error en inglés que envíe Clerk o el servidor
+        errorMessage = 'No se pudo iniciar sesión. Por favor, verifica tus datos o intenta nuevamente más tarde.';
       }
       
       setError(errorMessage);
