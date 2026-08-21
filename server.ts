@@ -13,7 +13,7 @@ import { Diagnostic360Service } from './server/diagnostic360Service';
 import { authMiddleware } from './server/middleware/authMiddleware';
 import { errorHandler } from './server/middleware/errorHandler';
 import dbRouter from './server/routes/dbRoutes';
-import { consultarCensoElectoralAPI } from '../../src/electoral/services/censoElectoralApi';
+// Missing import removed
 
 // Initialize Supabase Admin with Service Role Key for management tasks
 const normalizeSupabaseUrl = (url: string | undefined): string => {
@@ -149,7 +149,7 @@ async function startServer() {
   // Rutas de Autenticación / Perfil
   app.get('/api/auth/me', requireAuth(), async (req, res) => {
     try {
-      const clerkId = req.auth.userId;
+      const clerkId = (req as any).auth.userId;
       
       const { db } = await import('./src/db/index');
       const { profiles, clients } = await import('./src/db/schema');
@@ -489,35 +489,18 @@ async function startServer() {
     const isSimulated = !supabaseAdmin || !authHeader || authHeader === 'Bearer mock-token';
 
     if (isSimulated) {
-      try {
-        const censoRes = await consultarCensoElectoralAPI(cleanCedula);
-        if (censoRes.encontrado) {
-          return res.json({
-            success: true,
-            data: {
-              documento: cleanCedula,
-              nombreCompleto: censoRes.nombreCompleto || 'No disponible',
-              puestoVotacion: censoRes.puestoVotacion || 'No disponible',
-              direccionPuesto: censoRes.direccionPuesto || 'No disponible',
-              mesa: censoRes.mesa !== undefined ? String(censoRes.mesa) : 'No disponible',
-              habilitadoParaVotar: censoRes.estadoCedula === 'Habilitada',
-              razonNoHabilitado: censoRes.estadoCedula === 'Habilitada' ? null : censoRes.estadoCedula
-            }
-          });
-        } else {
-          return res.status(404).json({
-            success: false,
-            status: 'NO_ENCONTRADO',
-            message: 'NO SE ENCONTRÓ INFORMACIÓN'
-          });
+      return res.json({
+        success: true,
+        data: {
+          documento: cleanCedula,
+          nombreCompleto: 'Usuario Simulado',
+          puestoVotacion: 'Corferias',
+          direccionPuesto: 'Carrera 37 # 24-67',
+          mesa: '12',
+          habilitadoParaVotar: true,
+          razonNoHabilitado: null
         }
-      } catch (err) {
-        return res.status(502).json({
-          success: false,
-          status: 'PROVIDER_ERROR',
-          message: 'SERVICIO TEMPORALMENTE NO DISPONIBLE'
-        });
-      }
+      });
     }
 
     try {
@@ -3230,7 +3213,7 @@ let appInstance: any;
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   startServer().then(app => {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, "0.0.0.0", () => {
+    app.listen(Number(PORT), "0.0.0.0", () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
   });
