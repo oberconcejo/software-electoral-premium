@@ -203,7 +203,7 @@ export function AdministrativeSidebar({
         </div>
 
         {/* Role Access Card & Module Switcher Footer */}
-        <div className="p-3 border-t border-cyan-900/30 space-y-2 bg-[#030e17]/95">
+        <div className="p-3 border-t border-cyan-900/30 space-y-2 bg-[#030e17]/95 pb-6 md:pb-3">
           {/* Module Switcher & Logout */}
           <div className="flex items-center gap-1 pt-1">
             <button

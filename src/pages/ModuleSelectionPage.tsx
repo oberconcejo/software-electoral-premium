@@ -7,7 +7,8 @@ import {
   MapIcon, 
   Target, 
   ArrowRight,
-  AlertCircle
+  AlertCircle,
+  LogOut
 } from 'lucide-react';
 import { AppLogo } from '@/src/components/common/AppLogo';
 import { Card } from '@/src/components/ui/Card';
@@ -15,7 +16,7 @@ import { Button } from '@/src/components/ui/Button';
 
 export default function ModuleSelectionPage() {
   const navigate = useNavigate();
-  const { isDatabaseConfigured, isSystemReady, user, loading } = useAuth();
+  const { isDatabaseConfigured, isSystemReady, user, loading, logout } = useAuth();
 
   if (!isSystemReady || loading) {
     return (
@@ -160,13 +161,24 @@ export default function ModuleSelectionPage() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-12 flex flex-col md:flex-row items-center justify-center gap-4">
           <Button 
             variant="ghost" 
             className="text-slate-500 hover:text-white"
             onClick={() => navigate('/')}
           >
             Volver a la página principal
+          </Button>
+          <Button 
+            variant="ghost" 
+            className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 flex items-center gap-2"
+            onClick={async () => {
+              await logout();
+              navigate('/');
+            }}
+          >
+            <LogOut className="w-4 h-4" />
+            Cerrar Sesión
           </Button>
         </div>
       </motion.div>
