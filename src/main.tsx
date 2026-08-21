@@ -11,7 +11,7 @@ import { AuthProvider } from '@/src/contexts/AuthContext';
 import App from './App.tsx';
 import './index.css';
 
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'pk_test_ZW5vdWdoLXN1bmJpcmQtMTEyNy5jbGVyay5hY2NvdW50cy5kZXYk';
 
 if (!clerkPubKey) {
   throw new Error("Missing Publishable Key for Clerk");
