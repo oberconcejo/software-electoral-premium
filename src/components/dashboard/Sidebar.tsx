@@ -237,7 +237,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
         </div>
 
         {/* Role Access Card & Module Switcher Footer */}
-        <div className="p-4 border-t border-slate-800/50 space-y-3 bg-[#0a0a0b]/95 pb-6 md:pb-4">
+        <div className="p-4 border-t border-slate-800/50 space-y-3 bg-[#0a0a0b]/95 pb-24 md:pb-4">
           {(!isCollapsed || isOpen) && user && (
             <div className="px-3 py-2 rounded-xl bg-white/[0.02] border border-white/5 mb-1.5">
               <p className="text-xs font-bold text-white truncate">{user.name || user.email}</p>
