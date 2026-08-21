@@ -14,6 +14,9 @@ import CRMPage from '@/src/pages/CRMPage';
 import ElectoralPage from '@/src/pages/ElectoralPage';
 import UsersManagementPage from '@/src/pages/UsersManagementPage';
 import DatabaseSetupPage from '@/src/pages/DatabaseSetupPage';
+import AboutPage from '@/src/pages/AboutPage';
+import ContactPage from '@/src/pages/ContactPage';
+import LegalPage from '@/src/pages/LegalPage';
 import { AdminLayout } from '@/src/layouts/AdminLayout';
 import AdminDashboardPage from '@/src/pages/admin/AdminDashboardPage';
 import AdminClientsPage from '@/src/pages/admin/AdminClientsPage';
@@ -59,6 +62,9 @@ export default function App() {
         <Route path="/solicitar-acceso" element={<RequestAccessPage />} />
         <Route path="/register" element={<Navigate to="/solicitar-acceso" replace />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/sobre-nosotros" element={<AboutPage />} />
+        <Route path="/contacto" element={<ContactPage />} />
+        <Route path="/legal" element={<LegalPage />} />
         
         {/* Dedicated Gestión Administrativa Routes */}
         <Route 

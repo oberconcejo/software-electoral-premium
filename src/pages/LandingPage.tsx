@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { AppLogo } from '@/src/components/common/AppLogo';
 import { 
   testSupabaseConnection, 
@@ -904,9 +904,9 @@ export default function LandingPage() {
                 <h4 className="font-bold text-sm text-white uppercase tracking-wider">Compañía</h4>
               </div>
               <nav className="flex flex-col gap-2.5 text-slate-400 text-sm pt-1">
-                <a href="#" className="hover:text-white transition-colors">Sobre Nosotros</a>
-                <a href="#" className="hover:text-white transition-colors">Contacto</a>
-                <a href="#" className="hover:text-white transition-colors">Legal</a>
+                <Link to="/sobre-nosotros" className="hover:text-white transition-colors">Sobre Nosotros</Link>
+                <Link to="/contacto" className="hover:text-white transition-colors">Contacto</Link>
+                <Link to="/legal" className="hover:text-white transition-colors">Legal</Link>
               </nav>
             </div>
           </div>
