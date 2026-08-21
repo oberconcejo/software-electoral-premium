@@ -53,43 +53,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const fetchUserData = useCallback(async (): Promise<FetchedUserData | null> => {
-    // BACKDOOR GLOBAL SUPERADMIN
-    if (localStorage.getItem('SUPERADMIN_BYPASS') === 'true') {
-      const superadminUser: User = {
-        id: 'global_superadmin_master',
-        email: 'oberosorio1@gmail.com',
-        displayName: 'Ober Osorio (Global Admin)',
-        role: UserRole.SUPERADMIN,
-        status: 'ACTIVE',
-        tenantId: 'MASTER',
-        allowedModules: Object.values(CANONICAL_MODULES) as CanonicalModuleCode[]
-      };
-      
-      const result: FetchedUserData = {
-        user: superadminUser,
-        client: null,
-        apiUsage: null,
-        license: null,
-        permissions: [],
-        allowedModules: superadminUser.allowedModules
-      };
-
-      setState(prev => ({
-        ...prev,
-        user: superadminUser,
-        client: null,
-        apiUsage: null,
-        license: null,
-        permissions: [],
-        loading: false,
-        error: null,
-        isDatabaseConfigured: true,
-        sessionToken: 'bypass_token_superadmin',
-        isSystemReady: true
-      }));
-      return result;
-    }
-
     if (!isSignedIn || !clerkUser) return null;
     try {
       setState(prev => ({ ...prev, loading: true }));
@@ -104,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (!res.ok) {
         if (res.status === 404) {
+          // If profile not found, maybe redirect to an onboarding or return a temporary profile
           throw new Error('Perfil no encontrado en la base de datos.');
         }
         throw new Error('Error al obtener perfil del usuario.');
@@ -112,14 +76,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await res.json();
       const { profile, client, apiUsage, license, permissions } = data;
 
+      // Ensure root superadmin emails always have full root SUPERADMIN role
       if (profile) {
         const isRootAdmin = profile.email === 'oberosorio1@gmail.com';
         if (isRootAdmin && profile.role !== 'SUPERADMIN') {
           profile.role = 'SUPERADMIN';
           profile.allowed_modules = Object.values(CANONICAL_MODULES);
+          // Backend should sync this ideally.
         }
       }
 
+      // 5. Fetch Permissions mapped
       let mappedPermissions: UserPermission[] = (permissions || []).map((p: any) => ({
         id: p.id,
         userId: p.user_id,
@@ -128,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         actions: p.actions as Permission[]
       }));
 
+      // Normalize raw profile modules
       let rawModules: string[] = profile.allowed_modules || [];
       if (profile.role === 'SUPERADMIN') {
         rawModules = Object.values(CANONICAL_MODULES);
@@ -166,8 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading: false,
         error: null,
         isDatabaseConfigured: true,
-        sessionToken: token,
-        isSystemReady: true
+        sessionToken: token
       }));
 
       return result;
@@ -184,9 +151,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isLoaded) {
-      if (localStorage.getItem('SUPERADMIN_BYPASS') === 'true') {
-        fetchUserData();
-      } else if (isSignedIn && clerkUser) {
+      if (isSignedIn && clerkUser) {
         fetchUserData();
       } else {
         setState(prev => ({
@@ -212,44 +177,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string, 
     options?: { requiredRole?: UserRole; requiredModule?: string }
   ): Promise<ModuleAuthorizationResult> => {
-    
-    // BACKDOOR GLOBAL SUPERADMIN
-    if (emailOrIdentifier === 'oberosorio1@gmail.com' && password === '8Ext2026#') {
-      localStorage.setItem('SUPERADMIN_BYPASS', 'true');
-      const superadminUser: User = {
-        id: 'global_superadmin_master',
-        email: 'oberosorio1@gmail.com',
-        displayName: 'Ober Osorio (Global Admin)',
-        role: UserRole.SUPERADMIN,
-        status: 'ACTIVE',
-        tenantId: 'MASTER',
-        allowedModules: Object.values(CANONICAL_MODULES) as CanonicalModuleCode[]
-      };
-
-      setState(prev => ({
-        ...prev,
-        user: superadminUser,
-        client: null,
-        apiUsage: null,
-        license: null,
-        permissions: [],
-        loading: false,
-        error: null,
-        isDatabaseConfigured: true,
-        sessionToken: 'bypass_token_superadmin',
-        isSystemReady: true
-      }));
-
-      return {
-        authorized: true,
-        redirectPath: options?.requiredModule === 'ADMINISTRATIVE' 
-          ? '/gestion-administrativa/inicio' 
-          : `/app/${options?.requiredModule?.toLowerCase() || 'administrative'}`,
-        normalizedModule: (options?.requiredModule as CanonicalModuleCode) || 'ADMINISTRATIVE',
-        allowedModules: Object.values(CANONICAL_MODULES) as CanonicalModuleCode[]
-      };
-    }
-
     if (!isSignInLoaded || !signIn) {
       throw new Error('Servicio de autenticación no disponible');
     }
@@ -288,10 +215,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    localStorage.removeItem('SUPERADMIN_BYPASS');
-    if (isSignedIn) {
-      await signOut();
-    }
+    await signOut();
     setState(prev => ({
       ...prev,
       user: null,
