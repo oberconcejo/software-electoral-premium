@@ -4,7 +4,7 @@ import {
   ElectoralPresentationStatus, 
   QueryExecutionState 
 } from '@/src/types';
-import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 
 /**
  * Service Layer Configuration for Voting Location API
@@ -347,33 +347,15 @@ export async function logVotingQueryAudit(params: {
   departamentoEncontrado?: string;
 }) {
   try {
-    if (!supabase) return;
-
-    await supabase.from('polling_station_queries').insert([{
-      client_id: params.clientId || null,
-      user_id: params.userId || null,
-      user_name: params.userName,
-      user_email: params.userEmail,
-      user_role: params.userRole,
-      module_source: params.moduleSource,
-      query_type: 'INDIVIDUAL',
-      documento_consultado: maskCedula(params.cedula),
-      puesto_encontrado: params.puestoEncontrado || null,
-      mesa_encontrada: params.mesaEncontrada || null,
-      municipio_encontrado: params.municipioEncontrado || null,
-      departamento_encontrado: params.departamentoEncontrado || null,
-      total_records: 1,
-      found_count: params.resultStatus === 'ENCONTRADO' ? 1 : 0,
-      not_found_count: params.resultStatus === 'NO_ENCONTRADO' ? 1 : 0,
-      error_count: (params.resultStatus !== 'ENCONTRADO' && params.resultStatus !== 'NO_ENCONTRADO') ? 1 : 0,
-      results_summary: {
-        status: params.resultStatus,
-        apiQueryId: params.apiQueryId || null,
-        electoralStatus: params.electoralStatus || null,
-        timestamp: new Date().toISOString()
-      },
-      created_at: new Date().toISOString()
-    }]);
+    await apiClient.post('/api/electoral/query-log', {
+      cedula: maskCedula(params.cedula),
+      nombre: params.userName || null,
+      departamento: params.departamentoEncontrado || null,
+      municipio: params.municipioEncontrado || null,
+      puesto: params.puestoEncontrado || null,
+      mesa: params.mesaEncontrada || null,
+      exito: params.resultStatus === 'ENCONTRADO'
+    });
   } catch (error) {
     // Non-blocking traceability logging error
     console.warn('Traceability log notice:', error);

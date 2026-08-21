@@ -122,12 +122,26 @@ export function useAdministrativeData() {
       }
       const { data: witnessesData } = await witnessesQuery;
 
-      // 8. Fetch Jurors
-      let jurorsQuery = supabase.from('jurors').select('*');
-      if (clientId && user?.role !== 'SUPERADMIN') {
-        jurorsQuery = jurorsQuery.eq('client_id', clientId);
+      // 8. Fetch Jurors from Express API
+      let jurorsData: any[] = [];
+      try {
+        const { apiClient } = await import('@/src/lib/apiClient');
+        const apiJurors = await apiClient.get<any[]>('/api/administrative/jurors');
+        // Mapear los campos de Drizzle al tipo esperado en frontend
+        jurorsData = apiJurors.map((j: any) => ({
+          id: j.id,
+          client_id: j.clientId,
+          cedula: j.cedula,
+          nombre: j.nombreCompleto,
+          telefono: j.telefono,
+          puesto: j.puestoAsignado,
+          mesa: j.mesaAsignada,
+          cargo: j.estado || 'VOCAL 1', // Drizzle uses 'estado', fallback
+          observaciones: '' // Not stored in Drizzle yet
+        }));
+      } catch (err) {
+        console.warn('Error fetching jurors from API:', err);
       }
-      const { data: jurorsData } = await jurorsQuery;
 
       // 9. Fetch Surveys
       let surveysQuery = supabase.from('surveys').select('*');

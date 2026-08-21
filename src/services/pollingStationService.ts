@@ -1,4 +1,4 @@
-import { supabase } from '@/src/lib/supabase';
+import { apiClient } from '@/src/lib/apiClient';
 import { CitizenPollingPlace, PollingStationQueryRecord } from '@/src/types';
 import { ParsedExcelRow } from '@/src/utils/excelPollingUtils';
 
@@ -137,89 +137,80 @@ export async function lookupSingleCitizen(
     };
   }
 
-  // 1. Check Supabase 'voters' table
-  if (supabase) {
-    try {
-      let query = supabase.from('voters').select('*').eq('cedula', cleanDoc);
-      if (clientId) {
-        query = query.eq('client_id', clientId);
-      }
-      const { data: voterData } = await query.maybeSingle();
-
-      if (voterData) {
-        return {
-          documento: voterData.cedula,
-          nombreCompleto: voterData.nombre,
-          departamento: voterData.departamento || 'Santander',
-          municipio: voterData.municipio || 'Bucaramanga',
-          zona: voterData.comuna ? `Comuna ${voterData.comuna}` : 'Cabecera',
-          puestoVotacion: voterData.puesto || 'Puesto Central Municipal',
-          direccionPuesto: 'Sede Principal de Votación',
-          mesa: voterData.mesa ? `Mesa ${voterData.mesa}` : 'Mesa 01',
-          comuna: voterData.comuna,
-          barrio: voterData.barrio,
-          liderAsignado: voterData.lider_nombre,
-          infoAdicional: `Intención de Voto: ${voterData.intencion || 'Voto Seguro'}`,
-          estadoConsulta: 'ENCONTRADO'
-        };
-      }
-    } catch (e) {
-      console.warn('Could not query voters table from Supabase:', e);
+  // 1. Consultar a la nueva API Serverless (que agrupa voters, leaders, jurors, witnesses)
+  try {
+    const apiResult = await apiClient.get<any>(`/api/electoral/voter/${cleanDoc}`);
+    
+    if (apiResult.isVoter && apiResult.voterData) {
+      const v = apiResult.voterData;
+      return {
+        documento: v.cedula,
+        nombreCompleto: v.nombreCompleto,
+        departamento: v.departamento || 'Santander',
+        municipio: v.municipio || 'Bucaramanga',
+        zona: v.comuna ? `Comuna ${v.comuna}` : 'Cabecera',
+        puestoVotacion: v.puestoVotacion || 'Puesto Central Municipal',
+        direccionPuesto: v.direccion || 'Sede Principal de Votación',
+        mesa: v.mesa ? `Mesa ${v.mesa}` : 'Mesa 01',
+        comuna: v.comuna,
+        barrio: v.barrio,
+        liderAsignado: v.liderId ? 'Líder Asignado' : undefined,
+        infoAdicional: `Estado: ${v.estadoValidacion}`,
+        estadoConsulta: 'ENCONTRADO'
+      };
     }
 
-    // 2. Check 'leaders', 'witnesses', or 'jurors' tables
-    try {
-      const { data: leaderData } = await supabase.from('leaders').select('*').eq('cedula', cleanDoc).maybeSingle();
-      if (leaderData) {
-        return {
-          documento: leaderData.cedula,
-          nombreCompleto: leaderData.nombre,
-          departamento: 'Santander',
-          municipio: 'Bucaramanga',
-          zona: leaderData.comuna || 'Zona Urbana',
-          puestoVotacion: leaderData.puesto || 'Colegio Santander',
-          direccionPuesto: 'Dirección Registrada del Puesto',
-          mesa: leaderData.mesa ? `Mesa ${leaderData.mesa}` : 'Mesa 01',
-          comuna: leaderData.comuna,
-          barrio: leaderData.barrio,
-          infoAdicional: `Rol: Líder Comunitario (${leaderData.meta_votos || 50} votos meta)`,
-          estadoConsulta: 'ENCONTRADO'
-        };
-      }
+    if (apiResult.isLeader && apiResult.leaderData) {
+      const l = apiResult.leaderData;
+      return {
+        documento: l.cedula,
+        nombreCompleto: l.nombreCompleto,
+        departamento: 'Santander',
+        municipio: 'Bucaramanga',
+        zona: l.zonaInfluencia || 'Zona Urbana',
+        puestoVotacion: 'Colegio Santander',
+        direccionPuesto: 'Dirección Registrada del Puesto',
+        mesa: 'Mesa 01',
+        infoAdicional: `Rol: Líder Comunitario (${l.metaVotos || 50} votos meta)`,
+        estadoConsulta: 'ENCONTRADO'
+      };
+    }
 
-      const { data: jurorData } = await supabase.from('jurors').select('*').eq('cedula', cleanDoc).maybeSingle();
-      if (jurorData) {
-        return {
-          documento: jurorData.cedula,
-          nombreCompleto: jurorData.nombre,
-          departamento: 'Santander',
-          municipio: jurorData.municipio || 'Bucaramanga',
-          zona: 'Zona Electoral',
-          puestoVotacion: jurorData.puesto || 'Puesto de Jurados',
-          direccionPuesto: 'Sede de Votación Oficial',
-          mesa: jurorData.mesa ? `Mesa ${jurorData.mesa}` : 'Mesa 01',
-          infoAdicional: `Asignado como: Jurado (${jurorData.cargo || 'Vocal'})`,
-          estadoConsulta: 'ENCONTRADO'
-        };
-      }
+    if (apiResult.isJuror && apiResult.jurorData) {
+      const j = apiResult.jurorData;
+      return {
+        documento: j.cedula,
+        nombreCompleto: j.nombreCompleto,
+        departamento: 'Santander',
+        municipio: 'Bucaramanga',
+        zona: 'Zona Electoral',
+        puestoVotacion: j.puestoAsignado || 'Puesto de Jurados',
+        direccionPuesto: 'Sede de Votación Oficial',
+        mesa: j.mesaAsignada ? `Mesa ${j.mesaAsignada}` : 'Mesa 01',
+        infoAdicional: `Asignado como: Jurado`,
+        estadoConsulta: 'ENCONTRADO'
+      };
+    }
 
-      const { data: witnessData } = await supabase.from('witnesses').select('*').eq('cedula', cleanDoc).maybeSingle();
-      if (witnessData) {
-        return {
-          documento: witnessData.cedula,
-          nombreCompleto: witnessData.nombre,
-          departamento: 'Santander',
-          municipio: witnessData.municipio || 'Bucaramanga',
-          zona: witnessData.zona || 'Zona Electoral',
-          puestoVotacion: witnessData.puesto || 'Puesto de Escrutinio',
-          direccionPuesto: 'Puesto Acreditado',
-          mesa: witnessData.mesa ? `Mesa ${witnessData.mesa}` : 'Mesa 01',
-          infoAdicional: `Testigo Electoral (${witnessData.estado || 'Acreditado'})`,
-          estadoConsulta: 'ENCONTRADO'
-        };
-      }
-    } catch (e) {
-      console.warn('Could not query secondary tables:', e);
+    if (apiResult.isWitness && apiResult.witnessData) {
+      const w = apiResult.witnessData;
+      return {
+        documento: w.cedula,
+        nombreCompleto: w.nombreCompleto,
+        departamento: 'Santander',
+        municipio: 'Bucaramanga',
+        zona: w.zona || 'Zona Electoral',
+        puestoVotacion: w.puestoVotacion || 'Puesto de Escrutinio',
+        direccionPuesto: 'Puesto Acreditado',
+        mesa: 'Mesa 01',
+        infoAdicional: `Testigo Electoral (${w.estado || 'Acreditado'})`,
+        estadoConsulta: 'ENCONTRADO'
+      };
+    }
+  } catch (e: any) {
+    // Si da 404, pasamos silenciosamente al cache local o fallback
+    if (!e.message?.includes('404')) {
+      console.warn('Error fetching from Serverless API:', e);
     }
   }
 
@@ -354,38 +345,19 @@ export async function recordPollingQueryAudit(
     createdAt: timestamp
   };
 
-  // 1. Try Supabase
-  if (supabase) {
-    try {
-      await supabase.from('polling_station_queries').insert([
-        {
-          id: newId,
-          client_id: record.clientId || null,
-          user_id: record.userId || null,
-          user_name: record.userName,
-          user_email: record.userEmail,
-          user_role: record.userRole,
-          module_source: record.moduleSource,
-          query_type: record.queryType,
-          documento_consultado: record.documentoConsultado || null,
-          nombre_consultado: record.nombreConsultado || null,
-          puesto_encontrado: record.puestoEncontrado || null,
-          mesa_encontrada: record.mesaEncontrada || null,
-          municipio_encontrado: record.municipioEncontrado || null,
-          departamento_encontrado: record.departamentoEncontrado || null,
-          total_records: record.totalRecords,
-          found_count: record.foundCount,
-          not_found_count: record.notFoundCount,
-          error_count: record.errorCount,
-          duplicate_count: record.duplicateCount || 0,
-          file_name: record.fileName || null,
-          results_summary: record.resultsSummary ? JSON.stringify(record.resultsSummary.slice(0, 50)) : null,
-          created_at: timestamp
-        }
-      ]);
-    } catch (err) {
-      console.warn('Could not insert to polling_station_queries table in Supabase:', err);
-    }
+  // 1. Try API Serverless
+  try {
+    await apiClient.post('/api/electoral/query-log', {
+      cedula: record.documentoConsultado || '0',
+      nombre: record.nombreConsultado || null,
+      departamento: record.departamentoEncontrado || null,
+      municipio: record.municipioEncontrado || null,
+      puesto: record.puestoEncontrado || null,
+      mesa: record.mesaEncontrada || null,
+      exito: true
+    });
+  } catch (err) {
+    console.warn('Could not insert to polling_station_queries via API:', err);
   }
 
   // 2. Always persist in local storage cache for immediate display and offline resilience

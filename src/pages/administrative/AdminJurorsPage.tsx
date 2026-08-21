@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiClient } from '@/src/lib/apiClient';
 import { 
   Award, 
   Plus, 
@@ -246,36 +247,27 @@ export default function AdminJurorsPage() {
       const serializedObs = `partido:${form.partido};ocupacion:${form.ocupacion};resultadoSorteo:${form.resultadoSorteo};rolJurado:${form.rolJurado};resolucion:${form.resolucion};`;
 
       if (editingId && !editingId.startsWith('mock-')) {
-        const { error } = await supabase
-          .from('jurors')
-          .update({
-            nombre: form.nombre.trim(),
-            cedula: form.cedula.trim(),
-            telefono: form.telefono.trim(),
-            puesto: form.puestoVotacion.trim(),
-            mesa: form.mesa.trim(),
-            cargo: form.rolJurado,
-            observaciones: serializedObs
-          })
-          .eq('id', editingId);
-
-        if (error) throw error;
+        await apiClient.put(`/api/administrative/jurors/${editingId}`, {
+          nombre: form.nombre.trim(),
+          cedula: form.cedula.trim(),
+          telefono: form.telefono.trim(),
+          puesto: form.puestoVotacion.trim(),
+          mesa: form.mesa.trim(),
+          cargo: form.rolJurado,
+          observaciones: serializedObs
+        });
         setMessage({ text: 'Jurado electoral actualizado con éxito', type: 'success' });
       } else {
-        const { error } = await supabase.from('jurors').insert([
-          {
-            client_id: clientId,
-            nombre: form.nombre.trim(),
-            cedula: form.cedula.trim(),
-            telefono: form.telefono.trim(),
-            puesto: form.puestoVotacion.trim(),
-            mesa: form.mesa.trim(),
-            cargo: form.rolJurado,
-            observaciones: serializedObs
-          }
-        ]);
-
-        if (error) throw error;
+        await apiClient.post('/api/administrative/jurors', {
+          client_id: clientId,
+          nombre: form.nombre.trim(),
+          cedula: form.cedula.trim(),
+          telefono: form.telefono.trim(),
+          puesto: form.puestoVotacion.trim(),
+          mesa: form.mesa.trim(),
+          cargo: form.rolJurado,
+          observaciones: serializedObs
+        });
         setMessage({ text: 'Jurado electoral registrado con éxito', type: 'success' });
       }
 
@@ -316,8 +308,7 @@ export default function AdminJurorsPage() {
     if (!confirm('¿Estás seguro de que deseas eliminar este jurado postulado?')) return;
 
     try {
-      const { error } = await supabase.from('jurors').delete().eq('id', id);
-      if (error) throw error;
+      await apiClient.delete(`/api/administrative/jurors/${id}`);
       await refresh();
     } catch (err: any) {
       console.error('Error deleting juror:', err);

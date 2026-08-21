@@ -106,11 +106,66 @@ function getDeterministicVotingLocation(cedula: string, municipio: string, depar
   return { puesto, direccion, mesa };
 }
 
+import { clerkMiddleware, requireAuth } from '@clerk/express';
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
   app.use(express.json());
+  
+  // Añadimos el middleware principal de Clerk para validar los JWT automáticamente
+  app.use(clerkMiddleware());
+
+  // Rutas modulares
+  const electoralRoutes = (await import('./server/routes/electoral')).default;
+  app.use('/api/electoral', electoralRoutes);
+
+  const jurorsRoutes = (await import('./server/routes/jurors')).default;
+  app.use('/api/administrative/jurors', jurorsRoutes);
+
+  // Rutas de Autenticación / Perfil
+  app.get('/api/auth/me', requireAuth(), async (req, res) => {
+    try {
+      const clerkId = req.auth.userId;
+      
+      const { db } = await import('./src/db/index');
+      const { profiles, clients } = await import('./src/db/schema');
+      const { eq } = await import('drizzle-orm');
+
+      const userProfile = await db.select().from(profiles).where(eq(profiles.clerkId, clerkId)).limit(1);
+
+      if (userProfile.length === 0) {
+        return res.status(404).json({ error: 'Perfil no encontrado' });
+      }
+
+      const profile = userProfile[0];
+      let client = null;
+      
+      if (profile.clientId) {
+        const clientQuery = await db.select().from(clients).where(eq(clients.id, profile.clientId)).limit(1);
+        if (clientQuery.length > 0) {
+          client = clientQuery[0];
+        }
+      }
+
+      // Por ahora, simulamos API Usage, Licenses, Permissions para no complicar el esquema si no existen tablas.
+      res.json({
+        profile: {
+          ...profile,
+          allowed_modules: profile.allowedModules,
+          client_id: profile.clientId
+        },
+        client: client ? { ...client, allowed_modules: client.allowedModules } : null,
+        apiUsage: null,
+        license: null,
+        permissions: []
+      });
+    } catch (err) {
+      console.error('Error in /api/auth/me:', err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  });
 
   // API Route for Secure Voting Location Lookup (Official API Proxy)
   app.get("/api/voting-location/lookup", async (req, res) => {

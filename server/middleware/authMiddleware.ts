@@ -1,49 +1,39 @@
 import { Request, Response, NextFunction } from 'express';
-import { supabaseAdmin } from '../services/dbService';
+import { db } from '../../src/db';
+import { profiles } from '../../src/db/schema';
+import { eq } from 'drizzle-orm';
+import { clerkClient } from '@clerk/express';
 
 export interface AuthenticatedRequest extends Request {
   user?: any;
   clientId?: string | null;
+  auth?: any; // Añadido por Clerk
 }
 
 export const authMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
+  // Clerk ya procesó el token y pobló req.auth si usamos clerkMiddleware en server.ts
+  if (!req.auth || !req.auth.userId) {
     req.user = null;
     req.clientId = null;
     return next();
   }
 
   try {
-    const token = authHeader.replace('Bearer ', '');
-    if (token === 'mock-token') {
-      req.user = { id: 'mock-user-id', role: 'SUPERADMIN' };
-      req.clientId = 'mock-client-id';
-      return next();
-    }
+    const clerkId = req.auth.userId;
 
-    if (supabaseAdmin) {
-      const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
-      if (error || !user) {
-        req.user = null;
-        req.clientId = null;
-        return next();
-      }
+    // Buscar en Drizzle ORM
+    const userProfile = await db.select().from(profiles).where(eq(profiles.clerkId, clerkId)).limit(1);
 
-      req.user = user;
-      const { data: profile } = await supabaseAdmin
-        .from('profiles')
-        .select('client_id')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      req.clientId = profile?.client_id || null;
+    if (userProfile.length > 0) {
+      const profile = userProfile[0];
+      req.user = { id: profile.id, role: profile.role, clerkId: profile.clerkId };
+      req.clientId = profile.clientId || null;
     } else {
-      req.user = { id: 'mock-user-id' };
-      req.clientId = 'mock-client-id';
+      req.user = { id: clerkId, role: 'NUEVO_USUARIO' };
+      req.clientId = null;
     }
   } catch (err) {
-    console.warn('Authentication middleware validation failed:', err);
+    console.error('Authentication middleware Drizzle lookup failed:', err);
     req.user = null;
     req.clientId = null;
   }

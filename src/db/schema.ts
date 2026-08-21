@@ -58,3 +58,73 @@ export const campaigns = pgTable('campaigns', {
 });
 
 // We will add the rest of the tables progressively as needed.
+
+export const voters = pgTable('voters', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id),
+  cedula: text('cedula').unique().notNull(),
+  nombreCompleto: text('nombre_completo').notNull(),
+  telefono: text('telefono'),
+  direccion: text('direccion'),
+  departamento: text('departamento'),
+  municipio: text('municipio'),
+  comuna: text('comuna'),
+  barrio: text('barrio'),
+  puestoVotacion: text('puesto_votacion'),
+  mesa: text('mesa'),
+  liderId: uuid('lider_id'),
+  estadoValidacion: text('estado_validacion').default('PENDIENTE'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const leaders = pgTable('leaders', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id),
+  cedula: text('cedula').unique().notNull(),
+  nombreCompleto: text('nombre_completo').notNull(),
+  telefono: text('telefono'),
+  zonaInfluencia: text('zona_influencia'),
+  metaVotos: integer('meta_votos').default(0),
+  votosAsegurados: integer('votos_asegurados').default(0),
+  estado: text('estado').default('ACTIVO'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const jurors = pgTable('jurors', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id),
+  cedula: text('cedula').unique().notNull(),
+  nombreCompleto: text('nombre_completo').notNull(),
+  telefono: text('telefono'),
+  puestoAsignado: text('puesto_asignado'),
+  mesaAsignada: text('mesa_asignada'),
+  estado: text('estado').default('PENDIENTE'),
+  asistencia: boolean('asistencia').default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const witnesses = pgTable('witnesses', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id),
+  cedula: text('cedula').unique().notNull(),
+  nombreCompleto: text('nombre_completo').notNull(),
+  telefono: text('telefono'),
+  puestoVotacion: text('puesto_votacion'),
+  zona: text('zona'),
+  estado: text('estado').default('ACTIVO'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const pollingStationQueries = pgTable('polling_station_queries', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id),
+  cedula: text('cedula').notNull(),
+  nombre: text('nombre'),
+  departamento: text('departamento'),
+  municipio: text('municipio'),
+  puesto: text('puesto'),
+  mesa: text('mesa'),
+  exito: boolean('exito').default(false),
+  ipAddress: text('ip_address'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
