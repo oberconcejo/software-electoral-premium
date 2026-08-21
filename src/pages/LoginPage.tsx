@@ -19,8 +19,14 @@ export default function LoginPage() {
   const targetModule = normalizeModuleCode(rawTargetModule);
   const moduleMeta = MODULE_REGISTRY[targetModule];
   
-  const { login } = useAuth();
+  const { login, user, isSystemReady } = useAuth();
   
+  React.useEffect(() => {
+    if (isSystemReady && user) {
+      navigate('/select-module');
+    }
+  }, [user, isSystemReady, navigate]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -57,6 +63,9 @@ export default function LoginPage() {
         errorMessage = 'Demasiados intentos fallidos. Por favor, espera unos minutos e intenta de nuevo.';
       } else if (errorMessage.includes("Couldn't find your account") || errorMessage.includes("couldn't find your account")) {
         errorMessage = 'No se encontró ninguna cuenta con este correo electrónico.';
+      } else if (errorMessage.includes("already signed in") || errorMessage.includes("You're already signed in")) {
+        navigate('/select-module');
+        return;
       } else if (errorMessage.includes('Múltiples factores') || errorMessage.includes('needs_second_factor')) {
         errorMessage = 'Error: Tu cuenta de Clerk tiene activada la "Verificación en 2 Pasos" u otro factor de seguridad obligatorio. Por favor, ingresa al Dashboard de Clerk y deshabilítalo, ya que nuestro sistema personalizado requiere ingreso directo en un solo paso.';
       } else {
