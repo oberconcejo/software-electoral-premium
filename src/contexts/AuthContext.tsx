@@ -206,7 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           allowedModules: ['ADMINISTRATIVE', 'CRM', 'STRATEGY', 'TERRITORY', 'ELECTORAL', 'COMMUNICATIONS', 'ANALYSIS'] as CanonicalModuleCode[]
         };
       } else {
-        throw new Error('Múltiples factores de autenticación requeridos (No soportado actualmente)');
+        throw new Error(`Múltiples factores o paso adicional requerido. Estado actual: ${result.status}. Por favor verifica la configuración de Clerk.`);
       }
     } catch (err: any) {
       const errorMessage = err.errors?.[0]?.longMessage || err.message || 'Error al iniciar sesión';
