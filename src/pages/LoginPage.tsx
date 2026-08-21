@@ -21,8 +21,8 @@ export default function LoginPage() {
   
   const { login } = useAuth();
   
-  const [email, setEmail] = useState('oberosorio1@gmail.com');
-  const [password, setPassword] = useState('8Ext2026#');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -151,11 +151,10 @@ export default function LoginPage() {
                   <Input 
                     type="email"
                     placeholder="usuario@empresa.com"
-                    className="pl-12 h-12 bg-slate-900 border-white/10 text-slate-400 cursor-not-allowed focus:border-indigo-500 opacity-80"
+                    className="pl-12 h-12 bg-slate-900 border-white/10 text-white placeholder:text-slate-500 focus:border-indigo-500"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    readOnly
                     autoComplete="email"
                   />
                 </div>
@@ -168,11 +167,10 @@ export default function LoginPage() {
                   <Input 
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
-                    className="pl-12 h-12 bg-slate-900 border-white/10 text-slate-400 cursor-not-allowed focus:border-indigo-500 opacity-80"
+                    className="pl-12 h-12 bg-slate-900 border-white/10 text-white placeholder:text-slate-500 focus:border-indigo-500"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    readOnly
                     autoComplete="current-password"
                   />
                   <button
