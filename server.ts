@@ -142,6 +142,9 @@ async function startServer() {
   const rolesRoutes = (await import('./server/routes/roles')).default;
   app.use('/api/administrative/roles', rolesRoutes);
 
+  const systemRoutes = (await import('./server/routes/system')).default;
+  app.use('/api/system', systemRoutes);
+
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });
   });

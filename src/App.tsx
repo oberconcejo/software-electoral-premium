@@ -41,6 +41,7 @@ import StrategyPollingPlaceLookupPage from '@/src/pages/strategy/StrategyPolling
 import TerritoryPollingPlaceLookupPage from '@/src/pages/territory/TerritoryPollingPlaceLookupPage';
 import PollingPlaceLookupPage from '@/src/pages/PollingPlaceLookupPage';
 import NotFoundPage from '@/src/pages/NotFoundPage';
+import FirstUserSetupPage from '@/src/pages/FirstUserSetupPage';
 import { ProtectedRoute } from '@/src/components/auth/ProtectedRoute';
 import { UserRole } from '@/src/types';
 
@@ -53,6 +54,7 @@ export default function App() {
         <Route path="/select-module" element={<ModuleSelectionPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/solicitar-acceso" element={<RequestAccessPage />} />
+        <Route path="/primer-acceso" element={<FirstUserSetupPage />} />
         <Route path="/register" element={<Navigate to="/solicitar-acceso" replace />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         
