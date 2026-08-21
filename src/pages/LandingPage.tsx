@@ -149,7 +149,7 @@ export default function LandingPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/select-module')}
-            className="px-6 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-sm font-bold shadow-lg shadow-indigo-600/20 transition-colors"
+            className="hidden sm:block px-6 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-sm font-bold shadow-lg shadow-indigo-600/20 transition-colors"
           >
             Iniciar Sesión
           </motion.button>

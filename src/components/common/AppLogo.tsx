@@ -361,14 +361,14 @@ export function AppLogo({
       {LogoContainer}
       
       <div className="flex flex-col min-w-0">
-        <div className={cn("font-black tracking-tight leading-none flex items-center gap-1.5", config.titleSize)}>
-          <span className="text-white drop-shadow-sm">{title}</span>
-          <span className={cn(color.accentText, "font-extrabold")}>
+        <div className={cn("font-black tracking-tight leading-none flex items-center gap-1.5", config.titleSize, "text-sm sm:text-base md:text-inherit")}>
+          <span className="text-white drop-shadow-sm truncate">SOFTWARE</span>
+          <span className={cn(color.accentText, "font-extrabold truncate")}>
             ELECTORAL
           </span>
         </div>
         {subtitle && (
-          <span className={cn("text-slate-400 font-medium tracking-wide mt-0.5 truncate", config.subtitleSize)}>
+          <span className={cn("text-slate-400 font-medium tracking-wide mt-0.5 truncate hidden sm:block", config.subtitleSize)}>
             {subtitle}
           </span>
         )}
