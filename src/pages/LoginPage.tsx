@@ -58,8 +58,8 @@ export default function LoginPage() {
       } else if (errorMessage.includes("Couldn't find your account") || errorMessage.includes("couldn't find your account")) {
         errorMessage = 'No se encontró ninguna cuenta con este correo electrónico.';
       } else {
-        // Fallback para cualquier otro error en inglés que envíe Clerk o el servidor
-        errorMessage = 'No se pudo iniciar sesión. Por favor, verifica tus datos o intenta nuevamente más tarde.';
+        // Fallback para cualquier otro error, agregamos el mensaje original para diagnóstico
+        errorMessage = `No se pudo iniciar sesión. (Diagnóstico: ${errorMessage})`;
       }
       
       setError(errorMessage);
