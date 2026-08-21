@@ -24,31 +24,26 @@ export interface TerritorialSubdivision {
   createdAt?: string;
 }
 
+import { useQueryCache } from '@/src/hooks/useQueryCache';
+import { useOptimisticMutation } from '@/src/hooks/useOptimisticMutation';
+
 export function useTerritory() {
   const { user } = useAuth();
-  const [zones, setZones] = useState<TerritorialZone[]>([]);
-  const [subdivisions, setSubdivisions] = useState<TerritorialSubdivision[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingSubdivisions, setLoadingSubdivisions] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const clientId = user?.tenantId;
 
-  const fetchZones = async () => {
-    if (!supabase || !user?.tenantId) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
+  const { data: zones, isLoading: loading, error, refetch: refresh } = useQueryCache<TerritorialZone[]>(
+    `territory_zones_${clientId}`,
+    async () => {
+      if (!supabase || !clientId) return [];
       const { data, error: fetchError } = await supabase
         .from('territorial_zones')
         .select('*')
-        .eq('client_id', user.tenantId)
+        .eq('client_id', clientId)
         .order('nombre');
 
       if (fetchError) throw fetchError;
       
-      const mappedZones: TerritorialZone[] = (data || []).map(z => ({
+      return (data || []).map(z => ({
         id: z.id,
         clientId: z.client_id,
         nombre: z.nombre,
@@ -60,35 +55,23 @@ export function useTerritory() {
         coordenadasY: z.coordenadas_y || 0,
         status: z.status || 'ACTIVE'
       }));
+    },
+    { enabled: !!clientId, ttl: 24 * 60 * 60 * 1000 } // Cache for 24h
+  );
 
-      setZones(mappedZones);
-    } catch (err: any) {
-      console.error('Error fetching territory zones:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchSubdivisions = async (zoneId?: string) => {
-    if (!supabase || !user?.tenantId) return;
-
-    try {
-      setLoadingSubdivisions(true);
-      let query = supabase
+  const { data: subdivisions, isLoading: loadingSubdivisions, refetch: refreshSubdivisions } = useQueryCache<TerritorialSubdivision[]>(
+    `territory_subdivisions_${clientId}`,
+    async () => {
+      if (!supabase || !clientId) return [];
+      const { data, error: fetchError } = await supabase
         .from('territorial_subdivisions')
         .select('*')
-        .eq('client_id', user.tenantId);
-      
-      if (zoneId) {
-        query = query.eq('zone_id', zoneId);
-      }
-
-      const { data, error: fetchError } = await query.order('nombre');
+        .eq('client_id', clientId)
+        .order('nombre');
 
       if (fetchError) throw fetchError;
 
-      const mappedSubdivisions: TerritorialSubdivision[] = (data || []).map(s => ({
+      return (data || []).map(s => ({
         id: s.id,
         zoneId: s.zone_id,
         clientId: s.client_id,
@@ -96,19 +79,14 @@ export function useTerritory() {
         tipo: s.tipo,
         createdAt: s.created_at
       }));
+    },
+    { enabled: !!clientId, ttl: 24 * 60 * 60 * 1000 } // Cache for 24h
+  );
 
-      setSubdivisions(mappedSubdivisions);
-    } catch (err: any) {
-      console.error('Error fetching subdivisions:', err);
-    } finally {
-      setLoadingSubdivisions(false);
-    }
-  };
+  const { mutate: addZone } = useOptimisticMutation<TerritorialZone, Omit<TerritorialZone, 'id' | 'clientId'>>(
+    async (zone) => {
+      if (!supabase || !clientId) throw new Error('No client ID');
 
-  const addZone = async (zone: Omit<TerritorialZone, 'id' | 'clientId'>) => {
-    if (!supabase || !user?.tenantId) return null;
-
-    try {
       const dbZone = {
         nombre: zone.nombre,
         lideres_count: zone.lideresCount,
@@ -118,7 +96,7 @@ export function useTerritory() {
         coordenadas_x: zone.coordenadasX,
         coordenadas_y: zone.coordenadasY,
         status: zone.status,
-        client_id: user.tenantId
+        client_id: clientId
       };
 
       const { data, error: addError } = await supabase
@@ -129,7 +107,7 @@ export function useTerritory() {
 
       if (addError) throw addError;
       
-      const mappedZone: TerritorialZone = {
+      return {
         id: data.id,
         clientId: data.client_id,
         nombre: data.nombre,
@@ -141,28 +119,23 @@ export function useTerritory() {
         coordenadasY: data.coordenadas_y,
         status: data.status
       };
-
-      setZones([...zones, mappedZone]);
-      return mappedZone;
-    } catch (err: any) {
-      console.error('Error adding zone:', err);
-      throw err;
+    },
+    {
+      cacheKey: `territory_zones_${clientId}`,
+      updater: (oldData: TerritorialZone[] = [], vars) => {
+        return [...oldData, { ...vars, id: `temp-${Date.now()}`, clientId: clientId! }];
+      }
     }
-  };
-
-  useEffect(() => {
-    fetchZones();
-    fetchSubdivisions();
-  }, [user?.tenantId]);
+  );
 
   return {
-    zones,
-    subdivisions,
+    zones: zones || [],
+    subdivisions: subdivisions || [],
     loading,
     loadingSubdivisions,
-    error,
-    refresh: fetchZones,
-    refreshSubdivisions: fetchSubdivisions,
+    error: error ? error.message : null,
+    refresh,
+    refreshSubdivisions,
     addZone
   };
 }

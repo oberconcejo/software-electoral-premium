@@ -45,7 +45,7 @@ type VoterIntention = 'Voto Seguro' | 'Simpatizante' | 'Indeciso' | 'Opositor';
 
 export function AddVoterForm({ onSuccess, initialCedula = '' }: AddVoterFormProps) {
   const { addVoter, voters } = useVoters();
-  const { user, checkPermission } = useAuth();
+  const { user, license, apiUsage, checkPermission } = useAuth();
 
   const [cedula, setCedula] = useState(initialCedula);
   const [isConsulting, setIsConsulting] = useState(false);
@@ -76,6 +76,16 @@ export function AddVoterForm({ onSuccess, initialCedula = '' }: AddVoterFormProp
     checkPermission('CRM', 'VOTERS', 'CREATE') ||
     checkPermission('TERRITORY', 'VOTERS', 'CREATE')
   ) : true;
+
+  // Quota check
+  const hasReachedQuota = React.useMemo(() => {
+    if (!license || !apiUsage) return false;
+    // Assuming license.features.maxVoters or license.maxVoters exists
+    // Fallback to checking apiUsage.votersCount vs a hard limit if not explicitly in license
+    const maxVoters = license.maxVoters ?? license.features?.maxVoters ?? Infinity;
+    const currentVoters = apiUsage.votersCount ?? voters.length;
+    return currentVoters >= maxVoters;
+  }, [license, apiUsage, voters.length]);
 
   // Format date helper for regional display (e.g. 15 may 1985)
   const formatBirthDate = (rawDate?: string): string => {
@@ -143,6 +153,11 @@ export function AddVoterForm({ onSuccess, initialCedula = '' }: AddVoterFormProp
     // Check if user has required permissions
     if (!hasPermission) {
       setErrorMessage('No tienes permisos para realizar esta acción.');
+      return;
+    }
+
+    if (hasReachedQuota) {
+      setErrorMessage('Has alcanzado el límite de votantes permitido por tu plan.');
       return;
     }
 
@@ -346,6 +361,7 @@ export function AddVoterForm({ onSuccess, initialCedula = '' }: AddVoterFormProp
     phone.trim() && 
     !phoneError && 
     hasPermission && 
+    !hasReachedQuota &&
     !isSubmitting
   );
 
@@ -399,6 +415,18 @@ export function AddVoterForm({ onSuccess, initialCedula = '' }: AddVoterFormProp
             )}
           </Button>
         </form>
+
+        {/* Quota Warning */}
+        {hasReachedQuota && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3 text-amber-300 text-xs sm:text-sm font-semibold"
+          >
+            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
+            <span>Has alcanzado el límite máximo de votantes permitidos en tu plan actual. Contáctanos para hacer un upgrade.</span>
+          </motion.div>
+        )}
 
         {/* Global Notifications & Feedback */}
         <AnimatePresence>

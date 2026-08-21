@@ -14,17 +14,19 @@ import { useAuth } from '@/src/contexts/AuthContext';
 import { PermissionGuard } from '@/src/components/auth/PermissionGuard';
 import { useNavigate } from 'react-router-dom';
 import { UserRole } from '../types';
-
-const stats = [
-  { label: 'Votantes Registrados', value: '12,456', trend: '+12.5%', icon: Users, color: 'text-blue-500' },
-  { label: 'Testigos Electorales', value: '456', trend: '+8.2%', icon: FileCheck, color: 'text-emerald-500' },
-  { label: 'E14 Procesados', value: '89%', trend: '+15.3%', icon: BarChart3, color: 'text-purple-500' },
-  { label: 'Puestos Cubiertos', value: '42/50', trend: '84%', icon: MapPin, color: 'text-amber-500' },
-];
+import { useVoters } from '@/src/hooks/useVoters';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { voters } = useVoters();
+
+  const stats = [
+    { label: 'Votantes Registrados', value: voters.length.toString(), trend: 'En vivo', icon: Users, color: 'text-blue-500' },
+    { label: 'Testigos Electorales', value: '456', trend: '+8.2%', icon: FileCheck, color: 'text-emerald-500' },
+    { label: 'E14 Procesados', value: '89%', trend: '+15.3%', icon: BarChart3, color: 'text-purple-500' },
+    { label: 'Puestos Cubiertos', value: '42/50', trend: '84%', icon: MapPin, color: 'text-amber-500' },
+  ];
 
   return (
     <div className="space-y-8">

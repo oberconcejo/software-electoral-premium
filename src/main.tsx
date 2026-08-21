@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { esES } from '@clerk/localizations';
 import { AuthProvider } from '@/src/contexts/AuthContext';
+import { GlobalAppProvider } from '@/src/contexts/GlobalAppContext';
 import App from './App.tsx';
 import './index.css';
 
@@ -23,7 +24,9 @@ createRoot(document.getElementById('root')!).render(
     <ClerkProvider publishableKey={clerkPubKey} localization={esES}>
       <BrowserRouter>
         <AuthProvider>
-          <App />
+          <GlobalAppProvider>
+            <App />
+          </GlobalAppProvider>
         </AuthProvider>
       </BrowserRouter>
     </ClerkProvider>

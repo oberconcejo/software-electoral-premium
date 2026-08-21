@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/contexts/AuthContext';
+import { useQueryCache } from '@/src/hooks/useQueryCache';
+import { CacheManager } from '@/src/lib/cache/CacheManager';
 
 export interface Voter {
   id: string;
@@ -20,33 +22,28 @@ export interface Voter {
 
 export function useVoters() {
   const { user } = useAuth();
-  const [voters, setVoters] = useState<Voter[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const cacheKey = user?.tenantId ? `voters_${user.tenantId}` : null;
 
-  const fetchVoters = async () => {
-    if (!supabase || !user?.tenantId) {
-      setLoading(false);
-      return;
-    }
+  const fetchVotersFn = useCallback(async () => {
+    if (!supabase || !user?.tenantId) return [];
+    
+    const { data, error: fetchError } = await supabase
+      .from('voters')
+      .select('*')
+      .eq('client_id', user.tenantId)
+      .order('created_at', { ascending: false });
 
-    try {
-      setLoading(true);
-      const { data, error: fetchError } = await supabase
-        .from('voters')
-        .select('*')
-        .eq('client_id', user.tenantId)
-        .order('created_at', { ascending: false });
+    if (fetchError) throw fetchError;
+    return data || [];
+  }, [user?.tenantId]);
 
-      if (fetchError) throw fetchError;
-      setVoters(data || []);
-    } catch (err: any) {
-      console.error('Error fetching voters:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: voters = [], isLoading: loading, error: queryError, refetch: refresh } = useQueryCache<Voter[]>(
+    cacheKey || 'voters_empty',
+    fetchVotersFn,
+    { enabled: !!user?.tenantId }
+  );
+
+  const error = queryError ? queryError.message : null;
 
   const addVoter = async (voter: Omit<Voter, 'id' | 'client_id' | 'created_at'>) => {
     if (!supabase || !user?.tenantId) return null;
@@ -59,7 +56,12 @@ export function useVoters() {
         .single();
 
       if (addError) throw addError;
-      setVoters([data, ...voters]);
+      
+      // Update cache
+      if (cacheKey) {
+        CacheManager.invalidate(cacheKey);
+      }
+      
       return data;
     } catch (err: any) {
       console.error('Error adding voter:', err);
@@ -80,7 +82,12 @@ export function useVoters() {
         .single();
 
       if (updateError) throw updateError;
-      setVoters(voters.map(v => v.id === id ? data : v));
+
+      // Update cache
+      if (cacheKey) {
+        CacheManager.invalidate(cacheKey);
+      }
+
       return data;
     } catch (err: any) {
       console.error('Error updating voter:', err);
@@ -99,7 +106,12 @@ export function useVoters() {
         .eq('client_id', user.tenantId); // SECURITY: Record must belong to the tenant
 
       if (deleteError) throw deleteError;
-      setVoters(voters.filter(v => v.id !== id));
+
+      // Update cache
+      if (cacheKey) {
+        CacheManager.invalidate(cacheKey);
+      }
+
       return true;
     } catch (err: any) {
       console.error('Error deleting voter:', err);
@@ -107,15 +119,13 @@ export function useVoters() {
     }
   };
 
-  useEffect(() => {
-    fetchVoters();
-  }, [user?.tenantId]);
+
 
   return {
     voters,
     loading,
     error,
-    refresh: fetchVoters,
+    refresh,
     addVoter,
     updateVoter,
     deleteVoter

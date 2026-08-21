@@ -43,8 +43,12 @@ import PollingPlaceLookupPage from '@/src/pages/PollingPlaceLookupPage';
 import NotFoundPage from '@/src/pages/NotFoundPage';
 import { ProtectedRoute } from '@/src/components/auth/ProtectedRoute';
 import { UserRole } from '@/src/types';
+import { useSupabaseSync } from '@/src/hooks/useSupabaseSync';
 
 export default function App() {
+  // Inicializar el orquestador global de eventos en tiempo real
+  useSupabaseSync();
+
   return (
     <AnimatePresence mode="wait">
       <Routes>

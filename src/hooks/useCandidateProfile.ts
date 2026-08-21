@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/contexts/AuthContext';
+import { useGlobalApp } from '@/src/contexts/GlobalAppContext';
+import { useAuth } from '@/src/contexts/AuthContext';
 
 export interface CandidateProfile {
   id?: string;
@@ -86,7 +88,8 @@ const DEFAULT_SWOT: SWOTState = {
 
 export function useCandidateProfile() {
   const { user } = useAuth();
-  const [candidate, setCandidate] = useState<CandidateProfile | null>(null);
+  const { activeCandidate, loading: globalLoading, refreshGlobalData, setActiveCandidate } = useGlobalApp();
+  const [candidate, setCandidate] = useState<CandidateProfile | null>(activeCandidate as CandidateProfile | null);
   const [swot, setSwot] = useState<SWOTState>(DEFAULT_SWOT);
   const [loading, setLoading] = useState(true);
   const [savingCandidate, setSavingCandidate] = useState(false);
@@ -104,41 +107,8 @@ export function useCandidateProfile() {
         headers['Authorization'] = `Bearer ${session.access_token}`;
       }
 
-      // 1. Fetch Candidate
-      try {
-        const res = await fetch('/api/strategy/candidate', { headers });
-        if (res.ok) {
-          const json = await res.json();
-          if (json.candidate && (json.candidate.nombre || json.candidate.identificacion || json.candidate.cargo)) {
-            const raw = json.candidate;
-            const meta = raw.redes_sociales || {};
-            setCandidate({
-              id: raw.id,
-              client_id: raw.client_id,
-              nombre: raw.nombre || '',
-              nombre_politico: meta.nombre_politico || '',
-              cargo: raw.cargo || '',
-              partido: raw.partido || '',
-              territorio: raw.territorio || (meta.municipio && meta.departamento ? `${meta.municipio}, ${meta.departamento}` : meta.departamento || ''),
-              departamento: meta.departamento || raw.departamento || '',
-              municipio: meta.municipio || raw.municipio || '',
-              identificacion: raw.identificacion || '',
-              eslogan: meta.eslogan || raw.propuesta_valor || '',
-              resumen_profesional: meta.resumen_profesional || raw.perfil_profesional || '',
-              resena: meta.resena || '',
-              foto_url: raw.foto_url || '',
-              sello_inhabilidades: meta.sello_inhabilidades || '100% Verificado'
-            });
-          } else {
-            setCandidate(null);
-          }
-        } else {
-          setCandidate(null);
-        }
-      } catch (err) {
-        console.warn('Could not fetch candidate from API:', err);
-        setCandidate(null);
-      }
+      // 1. Candidate is synced from global context
+      setCandidate(activeCandidate as CandidateProfile | null);
 
       // 2. Fetch SWOT
       try {
@@ -190,8 +160,10 @@ export function useCandidateProfile() {
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (!globalLoading) {
+      fetchData();
+    }
+  }, [fetchData, globalLoading, activeCandidate]);
 
   const saveCandidate = async (customCandidate?: CandidateProfile): Promise<boolean> => {
     if (!canEdit) {
@@ -222,7 +194,8 @@ export function useCandidateProfile() {
       }
 
       if (data.candidate?.id) {
-        setCandidate(prev => ({ ...prev, id: data.candidate.id }));
+        setCandidate(prev => prev ? ({ ...prev, id: data.candidate.id }) : null);
+        await refreshGlobalData(); // Sync global state
       }
 
       setMessage({ text: 'Información del candidato guardada con éxito.', type: 'success' });
@@ -477,6 +450,7 @@ export function useCandidateProfile() {
       }
 
       setCandidate(null);
+      await refreshGlobalData(); // Sync global state
       setMessage({ text: 'Perfil del candidato eliminado con éxito.', type: 'success' });
       return true;
     } catch (err: any) {
