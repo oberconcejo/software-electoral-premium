@@ -307,7 +307,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading: false,
       error: null
     }));
+    window.location.href = '/';
   };
+
+  // Timer de inactividad de 20 minutos
+  useEffect(() => {
+    if (!state.user) return;
+
+    let timeoutId: NodeJS.Timeout;
+
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        logout();
+      }, 20 * 60 * 1000); // 20 minutos
+    };
+
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach(event => document.addEventListener(event, resetTimer));
+
+    resetTimer(); // Inicializar el timer al montar o al hacer login
+
+    return () => {
+      clearTimeout(timeoutId);
+      events.forEach(event => document.removeEventListener(event, resetTimer));
+    };
+  }, [state.user, isSignedIn]);
 
   const checkModuleAccess = (moduleCode: string): boolean => {
     if (!state.user) return false;
