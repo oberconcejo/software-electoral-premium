@@ -40,9 +40,12 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
     navigate('/');
+    // Usamos setTimeout para que la navegación se complete antes de desmontar el contexto
+    setTimeout(() => {
+      logout();
+    }, 50);
   };
 
   const handleNavigate = (path: string) => {

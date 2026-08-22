@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
-import { Mail, ArrowLeft, Loader2, User, Building2, Phone, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, ArrowLeft, Loader2, User, Building2, Phone, CheckCircle2, AlertCircle, Key, FileText, LayoutTemplate } from 'lucide-react';
 import { AppLogo } from '@/src/components/common/AppLogo';
 
 export default function RequestAccessPage() {
@@ -12,6 +12,10 @@ export default function RequestAccessPage() {
   const [fullName, setFullName] = useState('');
   const [organization, setOrganization] = useState('');
   const [phone, setPhone] = useState('');
+  const [requestedUsername, setRequestedUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [requestedModule, setRequestedModule] = useState('ADMINISTRATIVE');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -32,6 +36,11 @@ export default function RequestAccessPage() {
           email,
           organization,
           phone,
+          requestedUsername,
+          password,
+          confirmPassword,
+          requestedModule,
+          reason: `Solicita acceso para ${organization} al módulo ${requestedModule}`,
         }),
       });
 
@@ -177,6 +186,71 @@ export default function RequestAccessPage() {
                       required
                     />
                   </div>
+                </div>
+              </div>
+              
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">Usuario Deseado (Cédula o Correo)</label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <Input 
+                    placeholder="Ej. 12345678"
+                    className="pl-10 h-11 bg-slate-900 border-white/10 text-white text-xs"
+                    value={requestedUsername}
+                    onChange={(e) => setRequestedUsername(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">Contraseña</label>
+                  <div className="relative">
+                    <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Input 
+                      type="password"
+                      placeholder="Mínimo 8 caracteres"
+                      className="pl-10 h-11 bg-slate-900 border-white/10 text-white text-xs"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">Confirmar Contraseña</label>
+                  <div className="relative">
+                    <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Input 
+                      type="password"
+                      placeholder="Confirmar contraseña"
+                      className="pl-10 h-11 bg-slate-900 border-white/10 text-white text-xs"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">Módulo a Solicitar</label>
+                <div className="relative">
+                  <LayoutTemplate className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 z-10" />
+                  <select
+                    className="w-full pl-10 pr-4 h-11 bg-slate-900 border border-white/10 text-white text-xs rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                    value={requestedModule}
+                    onChange={(e) => setRequestedModule(e.target.value)}
+                    required
+                  >
+                    <option value="ADMINISTRATIVE">Gestión Administrativa</option>
+                    <option value="CRM">Gestión de CRM / Electores</option>
+                    <option value="STRATEGY">Estrategia y Análisis</option>
+                    <option value="TERRITORY">Gestión Territorial</option>
+                    <option value="ELECTORAL">Control Electoral (Día D)</option>
+                  </select>
                 </div>
               </div>
             </div>

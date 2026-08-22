@@ -33,9 +33,11 @@ export function AdministrativeSidebar({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
     navigate('/');
+    setTimeout(() => {
+      logout();
+    }, 50);
   };
 
   const handleNavigate = (path: string) => {

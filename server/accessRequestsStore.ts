@@ -9,6 +9,7 @@ export interface StoredAccessRequest {
   requested_username: string;
   reason: string;
   password_hash: string;
+  requested_module?: string;
   status: 'PENDIENTE' | 'APROBADA' | 'RECHAZADA';
   rejection_reason?: string | null;
   reviewed_by?: string | null;

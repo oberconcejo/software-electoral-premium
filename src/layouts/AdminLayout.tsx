@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate, Link, useLocation, Outlet } from 'react-router-dom';
+import { Routes, Route, Navigate, Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -26,7 +26,15 @@ import { AppLogo } from '@/src/components/common/AppLogo';
 export const AdminLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+
+  const handleLogout = async () => {
+    navigate('/');
+    setTimeout(() => {
+      logout();
+    }, 50);
+  };
 
   const menuItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
@@ -103,7 +111,7 @@ export const AdminLayout: React.FC<{ children?: React.ReactNode }> = ({ children
 
         <div className="p-4 border-t border-white/5">
           <button 
-            onClick={logout}
+            onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-rose-500 hover:bg-rose-500/10 transition-all font-bold text-sm"
           >
             <LogOut className="w-5 h-5" /> Cerrar Sesión Privada

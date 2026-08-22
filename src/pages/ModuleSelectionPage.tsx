@@ -171,13 +171,15 @@ export default function ModuleSelectionPage() {
           </Button>
           <Button 
             variant="ghost" 
-            className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 flex items-center gap-2"
-            onClick={async () => {
-              await logout();
+            onClick={() => {
               navigate('/');
-            }}
+              setTimeout(() => {
+                logout();
+              }, 50);
+            }} 
+            className="text-slate-400 hover:text-rose-400 font-semibold"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-4 h-4 mr-2" />
             Cerrar Sesión
           </Button>
         </div>

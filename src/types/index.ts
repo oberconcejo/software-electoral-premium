@@ -526,6 +526,7 @@ export interface AdminAccessRequest {
   phone?: string;
   requestedUsername: string;
   reason: string;
+  requestedModule?: string;
   status: 'PENDIENTE' | 'APROBADA' | 'RECHAZADA' | 'CANCELADA';
   rejectionReason?: string;
   reviewedBy?: string;

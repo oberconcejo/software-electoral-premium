@@ -1884,7 +1884,7 @@ async function startServer() {
 
   // 1. Enviar solicitud de acceso (Público / Registro por primera vez)
   app.post("/api/admin/access-requests", async (req, res) => {
-    const { fullName, email, phone, requestedUsername, reason, password, confirmPassword } = req.body;
+    const { fullName, email, phone, requestedUsername, reason, password, confirmPassword, requestedModule } = req.body;
 
     if (!supabaseAdmin) {
       return res.status(500).json({ error: "El servicio de base de datos no está disponible temporalmente." });
@@ -1974,6 +1974,7 @@ async function startServer() {
         requested_username: cleanUsername,
         reason: reason.trim(),
         password_hash: passwordHash,
+        requested_module: requestedModule,
         status: 'PENDIENTE',
         ip_address: req.ip || (req.headers['x-forwarded-for'] as string) || '',
         user_agent: (req.headers['user-agent'] as string) || '',
@@ -2073,7 +2074,7 @@ async function startServer() {
       try {
         const { data: requests, error: reqError } = await supabaseAdmin
           .from('admin_access_requests')
-          .select('id, full_name, email, phone, requested_username, reason, status, rejection_reason, reviewed_by, reviewed_at, ip_address, created_at, updated_at')
+          .select('id, full_name, email, phone, requested_username, reason, requested_module, status, rejection_reason, reviewed_by, reviewed_at, ip_address, created_at, updated_at')
           .order('created_at', { ascending: false });
 
         if (!reqError && requests) {
@@ -2111,6 +2112,7 @@ async function startServer() {
   // 3. Aprobar solicitud de acceso (SuperAdmin únicamente)
   app.post("/api/admin/access-requests/:id/approve", async (req, res) => {
     const { id } = req.params;
+    const { approvedModule } = req.body || {};
     const authHeader = req.headers.authorization;
     if (!supabaseAdmin) return res.status(500).json({ error: "El servicio de base de datos no está configurado." });
 
@@ -2179,6 +2181,7 @@ async function startServer() {
       }
 
       // Crear o actualizar perfil en la tabla profiles
+      const assignedModule = approvedModule || request.requested_module || 'ADMINISTRATIVE';
       const { error: profileUpsertErr } = await supabaseAdmin
         .from('profiles')
         .upsert([{
@@ -2186,9 +2189,9 @@ async function startServer() {
           email: request.email,
           display_name: request.full_name,
           phone: request.phone,
-          role: 'SUPERADMIN',
+          role: 'ADMIN',
           status: 'ACTIVE',
-          allowed_modules: ['ADMINISTRATIVE', 'TERRITORY', 'STRATEGY', 'CRM', 'ELECTORAL'],
+          allowed_modules: [assignedModule],
           updated_at: new Date().toISOString()
         }]);
 

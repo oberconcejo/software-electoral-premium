@@ -43,6 +43,7 @@ export default function AdminAccessRequestsPage() {
   // Approval modal state
   const [approvingRequest, setApprovingRequest] = useState<AdminAccessRequest | null>(null);
   const [isApproving, setIsApproving] = useState(false);
+  const [approvedModule, setApprovedModule] = useState<string>('ADMINISTRATIVE');
 
   // Rejection modal state
   const [rejectingRequest, setRejectingRequest] = useState<AdminAccessRequest | null>(null);
@@ -93,6 +94,7 @@ export default function AdminAccessRequestsPage() {
         phone: item.phone,
         requestedUsername: item.requested_username,
         reason: item.reason,
+        requestedModule: item.requested_module,
         status: item.status,
         rejectionReason: item.rejection_reason,
         reviewedBy: item.reviewed_by,
@@ -132,7 +134,8 @@ export default function AdminAccessRequestsPage() {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ approvedModule: approvedModule || approvingRequest.requestedModule || 'ADMINISTRATIVE' })
       });
 
       const data = await response.json();
@@ -364,6 +367,7 @@ export default function AdminAccessRequestsPage() {
               <thead>
                 <tr className="border-b border-white/5 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-white/[0.02]">
                   <th className="py-4 px-6">Solicitante</th>
+                  <th className="py-4 px-6">Módulo Solicitado</th>
                   <th className="py-4 px-6">Usuario Solicitado</th>
                   <th className="py-4 px-6">Teléfono</th>
                   <th className="py-4 px-6">Fecha Solicitud</th>
@@ -380,6 +384,15 @@ export default function AdminAccessRequestsPage() {
                         <Mail className="w-3.5 h-3.5 text-slate-500" />
                         {req.email}
                       </div>
+                    </td>
+                    <td className="py-4 px-6 text-slate-300">
+                      <span className="text-xs bg-slate-800 px-2 py-1 rounded-md border border-slate-700">
+                        {req.requestedModule === 'ADMINISTRATIVE' ? 'Administrativa' :
+                         req.requestedModule === 'CRM' ? 'CRM / Electores' :
+                         req.requestedModule === 'STRATEGY' ? 'Estrategia' :
+                         req.requestedModule === 'TERRITORY' ? 'Territorial' :
+                         req.requestedModule === 'ELECTORAL' ? 'Día D' : 'Desconocido'}
+                      </span>
                     </td>
                     <td className="py-4 px-6">
                       <span className="inline-flex items-center gap-1 font-mono text-indigo-300 bg-indigo-500/10 px-2.5 py-1 rounded-xl border border-indigo-500/20">
@@ -430,7 +443,10 @@ export default function AdminAccessRequestsPage() {
                         {req.status === 'PENDIENTE' && (
                           <>
                             <button
-                              onClick={() => setApprovingRequest(req)}
+                              onClick={() => {
+                                setApprovingRequest(req);
+                                setApprovedModule(req.requestedModule || 'ADMINISTRATIVE');
+                              }}
                               className="px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/30 text-emerald-300 hover:text-white font-bold transition-all text-xs flex items-center gap-1.5 shadow-sm"
                             >
                               <Check className="w-3.5 h-3.5" />
@@ -566,7 +582,10 @@ export default function AdminAccessRequestsPage() {
                     </button>
                     <Button
                       type="button"
-                      onClick={() => setApprovingRequest(selectedRequest)}
+                      onClick={() => {
+                        setApprovingRequest(selectedRequest);
+                        setApprovedModule(selectedRequest.requestedModule || 'ADMINISTRATIVE');
+                      }}
                       className="h-10 px-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 text-xs"
                     >
                       Aprobar Solicitud
@@ -600,8 +619,23 @@ export default function AdminAccessRequestsPage() {
                 <p className="text-xs text-slate-400 leading-relaxed">
                   ¿Está seguro de que desea aprobar la solicitud de <strong className="text-white">{approvingRequest.fullName}</strong> ({approvingRequest.email})?
                 </p>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">Módulo a Otorgar</label>
+                  <select
+                    className="w-full pl-3 pr-4 h-10 bg-slate-900 border border-emerald-500/20 text-white text-xs rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                    value={approvedModule}
+                    onChange={(e) => setApprovedModule(e.target.value)}
+                  >
+                    <option value="ADMINISTRATIVE">Gestión Administrativa</option>
+                    <option value="CRM">Gestión de CRM / Electores</option>
+                    <option value="STRATEGY">Estrategia y Análisis</option>
+                    <option value="TERRITORY">Gestión Territorial</option>
+                    <option value="ELECTORAL">Control Electoral (Día D)</option>
+                  </select>
+                </div>
                 <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 mt-3">
-                  ✓ Se creará o activará su cuenta en el panel administrativo.<br />
+                  ✓ Se creará o activará su cuenta en el sistema.<br />
+                  ✓ Se le dará acceso únicamente al módulo seleccionado.<br />
                   ✓ Se enviará un correo de confirmación de acceso al solicitante.
                 </div>
               </div>
