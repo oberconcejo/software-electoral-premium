@@ -117,9 +117,9 @@ export default function RequestAccessPage() {
             variant="ghost"
             size="sm"
             className="mb-8 gap-2 -ml-2 text-slate-400 hover:text-white hover:bg-white/5"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/')}
           >
-            <ArrowLeft className="w-4 h-4" /> Volver al Login
+            <ArrowLeft className="w-4 h-4" /> Volver al Inicio
           </Button>
 
           <div className="mb-10">
