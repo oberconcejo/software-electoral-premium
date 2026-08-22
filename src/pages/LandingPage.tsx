@@ -62,6 +62,9 @@ export default function LandingPage() {
 
   useEffect(() => {
     // Siempre iniciar en el top al recargar
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
     window.scrollTo(0, 0);
     
     const handleScroll = () => {
@@ -936,6 +939,22 @@ export default function LandingPage() {
           </div>
         </div>
       </motion.footer>
+
+      {/* Botón Scroll to Top */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-6 right-6 p-3 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-500/20 z-50 border border-white/10"
+            aria-label="Volver arriba"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
