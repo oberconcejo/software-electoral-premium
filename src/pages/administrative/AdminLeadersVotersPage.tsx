@@ -740,187 +740,187 @@ export default function AdminLeadersVotersPage() {
 
       {/* Create Voter Modal */}
       {isVoterModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
-            <div className="bg-slate-900 border border-white/10 rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Vote className="w-4 h-4 text-indigo-400" />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-6xl h-full max-h-[90vh] shadow-2xl flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between border-b border-white/10 p-5 sm:p-6 shrink-0 bg-slate-900">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Vote className="w-5 h-5 text-indigo-400" />
                 Registrar Nuevo Votante
               </h3>
-              <button onClick={() => setIsVoterModalOpen(false)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
+              <button onClick={() => setIsVoterModalOpen(false)} className="text-slate-400 hover:text-white transition-colors">
+                <X className="w-6 h-6" />
               </button>
             </div>
 
             {message && (
-              <div className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
+              <div className={`mx-6 mt-6 p-4 rounded-xl text-sm flex items-center gap-3 shrink-0 ${
                 message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
               }`}>
-                {message.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
                 {message.text}
               </div>
             )}
 
-            <form onSubmit={handleSaveVoter} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Nombre Completo *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej. Ana Lucía Gómez"
-                    value={voterForm.nombre}
-                    onChange={(e) => setVoterForm({ ...voterForm, nombre: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Cédula de Ciudadanía *</label>
-                  <div className="flex gap-2">
+            <form onSubmit={handleSaveVoter} className="flex flex-col flex-1 overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Nombre Completo *</label>
                     <input
                       type="text"
                       required
-                      placeholder="Ej. 1098456123"
-                      value={voterForm.cedula}
-                      onChange={(e) => setVoterForm({ ...voterForm, cedula: e.target.value })}
-                      className="flex-1 bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none font-mono"
+                      placeholder="Ej. Ana Lucía Gómez"
+                      value={voterForm.nombre}
+                      onChange={(e) => setVoterForm({ ...voterForm, nombre: e.target.value })}
+                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
                     />
-                    <button
-                      type="button"
-                      onClick={handleLookupVoterInfo}
-                      disabled={isQuerying}
-                      className="px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center justify-center gap-1 shadow-md disabled:opacity-50"
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Cédula de Ciudadanía *</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ej. 1098456123"
+                        value={voterForm.cedula}
+                        onChange={(e) => setVoterForm({ ...voterForm, cedula: e.target.value })}
+                        className="flex-1 bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none font-mono transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleLookupVoterInfo}
+                        disabled={isQuerying}
+                        className="px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md disabled:opacity-50 transition-all"
+                      >
+                        {isQuerying ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Consultar'}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Teléfono</label>
+                    <input
+                      type="tel"
+                      placeholder="Ej. 3109876543"
+                      value={voterForm.telefono}
+                      onChange={(e) => setVoterForm({ ...voterForm, telefono: e.target.value })}
+                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Intención de Voto</label>
+                    <select
+                      value={voterForm.intencion}
+                      onChange={(e) => setVoterForm({ ...voterForm, intencion: e.target.value as any })}
+                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
                     >
-                      {isQuerying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Consultar'}
-                    </button>
+                      <option value="Voto Seguro">Voto Seguro</option>
+                      <option value="Probable">Probable</option>
+                      <option value="Indeciso">Indeciso</option>
+                      <option value="En Contra">En Contra</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Circunscripción / Municipio *</label>
+                    <select
+                      required
+                      value={voterForm.zoneId}
+                      onChange={(e) => handleZoneChange('voter', e.target.value)}
+                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
+                    >
+                      <option value="">Seleccione circunscripción</option>
+                      {zones.map(z => (
+                        <option key={z.id} value={z.id}>{z.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Corregimiento / Vereda *</label>
+                    <select
+                      required
+                      disabled={!voterForm.zoneId || loadingSubdivisions}
+                      value={voterForm.subdivisionId}
+                      onChange={(e) => setVoterForm({ ...voterForm, subdivisionId: e.target.value })}
+                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {!voterForm.zoneId ? (
+                        <option value="">Seleccione primero la circunscripción</option>
+                      ) : loadingSubdivisions ? (
+                        <option value="">Cargando corregimientos y veredas...</option>
+                      ) : subdivisions.length === 0 ? (
+                        <option value="">No hay corregimientos o veredas disponibles</option>
+                      ) : (
+                        <>
+                          <option value="">Seleccione corregimiento o vereda</option>
+                          <optgroup label="Corregimientos">
+                            {subdivisions.filter(s => s.tipo === 'CORREGIMIENTO').map(s => (
+                              <option key={s.id} value={s.id}>{s.nombre}</option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Veredas">
+                            {subdivisions.filter(s => s.tipo === 'VEREDA').map(s => (
+                              <option key={s.id} value={s.id}>{s.nombre}</option>
+                            ))}
+                          </optgroup>
+                        </>
+                      )}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Puesto de Votación</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Escuela República de Colombia"
+                      value={voterForm.puesto}
+                      onChange={(e) => setVoterForm({ ...voterForm, puesto: e.target.value })}
+                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Mesa</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Mesa 4"
+                      value={voterForm.mesa}
+                      onChange={(e) => setVoterForm({ ...voterForm, mesa: e.target.value })}
+                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none font-mono transition-colors"
+                    />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Teléfono</label>
-                  <input
-                    type="tel"
-                    placeholder="Ej. 3109876543"
-                    value={voterForm.telefono}
-                    onChange={(e) => setVoterForm({ ...voterForm, telefono: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Intención de Voto</label>
+
+                <div className="pt-4 border-t border-white/5">
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">Líder Asignado</label>
                   <select
-                    value={voterForm.intencion}
-                    onChange={(e) => setVoterForm({ ...voterForm, intencion: e.target.value as any })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
+                    value={voterForm.liderId}
+                    onChange={(e) => setVoterForm({ ...voterForm, liderId: e.target.value })}
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
                   >
-                    <option value="Voto Seguro">Voto Seguro</option>
-                    <option value="Probable">Probable</option>
-                    <option value="Indeciso">Indeciso</option>
-                    <option value="En Contra">En Contra</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Circunscripción / Municipio *</label>
-                  <select
-                    required
-                    value={voterForm.zoneId}
-                    onChange={(e) => handleZoneChange('voter', e.target.value)}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  >
-                    <option value="">Seleccione circunscripción</option>
-                    {zones.map(z => (
-                      <option key={z.id} value={z.id}>{z.nombre}</option>
+                    <option value="">Sin líder asignado (Registro Directo)</option>
+                    {leaders.map(l => (
+                      <option key={l.id} value={l.id}>{l.nombre} ({l.comuna || 'General'})</option>
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Corregimiento / Vereda *</label>
-                  <select
-                    required
-                    disabled={!voterForm.zoneId || loadingSubdivisions}
-                    value={voterForm.subdivisionId}
-                    onChange={(e) => setVoterForm({ ...voterForm, subdivisionId: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {!voterForm.zoneId ? (
-                      <option value="">Seleccione primero la circunscripción</option>
-                    ) : loadingSubdivisions ? (
-                      <option value="">Cargando corregimientos y veredas...</option>
-                    ) : subdivisions.length === 0 ? (
-                      <option value="">No hay corregimientos o veredas disponibles</option>
-                    ) : (
-                      <>
-                        <option value="">Seleccione corregimiento o vereda</option>
-                        <optgroup label="Corregimientos">
-                          {subdivisions.filter(s => s.tipo === 'CORREGIMIENTO').map(s => (
-                            <option key={s.id} value={s.id}>{s.nombre}</option>
-                          ))}
-                        </optgroup>
-                        <optgroup label="Veredas">
-                          {subdivisions.filter(s => s.tipo === 'VEREDA').map(s => (
-                            <option key={s.id} value={s.id}>{s.nombre}</option>
-                          ))}
-                        </optgroup>
-                      </>
-                    )}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Puesto de Votación</label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Escuela República de Colombia"
-                    value={voterForm.puesto}
-                    onChange={(e) => setVoterForm({ ...voterForm, puesto: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Mesa</label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Mesa 4"
-                    value={voterForm.mesa}
-                    onChange={(e) => setVoterForm({ ...voterForm, mesa: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none font-mono"
-                  />
-                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Líder Asignado</label>
-                <select
-                  value={voterForm.liderId}
-                  onChange={(e) => setVoterForm({ ...voterForm, liderId: e.target.value })}
-                  className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                >
-                  <option value="">Sin líder asignado (Registro Directo)</option>
-                  {leaders.map(l => (
-                    <option key={l.id} value={l.id}>{l.nombre} ({l.comuna || 'General'})</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
+              <div className="flex items-center justify-end gap-3 p-5 sm:p-6 border-t border-white/10 shrink-0 bg-slate-900">
                 <button
                   type="button"
                   onClick={() => setIsVoterModalOpen(false)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
+                  className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-600/30"
+                  className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all"
                 >
-                  <Save className="w-3.5 h-3.5" />
+                  <Save className="w-4 h-4" />
                   {saving ? 'Guardando...' : 'Guardar Votante'}
                 </button>
               </div>
             </form>
           </div>
-        </div>
         </div>
       )}
     </div>
