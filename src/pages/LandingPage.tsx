@@ -881,27 +881,27 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Bloque 2: Producto */}
+            {/* Bloque 2: Módulos */}
             <div className="md:col-span-3 space-y-3">
               <div className="h-8 flex items-center">
-                <h4 className="font-bold text-sm text-white uppercase tracking-wider">Producto</h4>
+                <h4 className="font-bold text-sm text-white uppercase tracking-wider">Módulos del Sistema</h4>
               </div>
               <nav className="flex flex-col gap-2.5 text-slate-400 text-sm pt-1">
-                <a href="#features" className="hover:text-white transition-colors">Características</a>
-                <a href="#demo" className="hover:text-white transition-colors">Demo</a>
-                <a href="#" className="hover:text-white transition-colors">Seguridad</a>
+                <a href="#features" className="hover:text-white transition-colors">Gestión Administrativa</a>
+                <a href="#features" className="hover:text-white transition-colors">Gestión Estratégica</a>
+                <a href="#features" className="hover:text-white transition-colors">Gestión Territorial</a>
               </nav>
             </div>
 
-            {/* Bloque 3: Compañía */}
+            {/* Bloque 3: Soporte y Legal */}
             <div className="md:col-span-3 space-y-3">
               <div className="h-8 flex items-center">
-                <h4 className="font-bold text-sm text-white uppercase tracking-wider">Compañía</h4>
+                <h4 className="font-bold text-sm text-white uppercase tracking-wider">Soporte y Legal</h4>
               </div>
               <nav className="flex flex-col gap-2.5 text-slate-400 text-sm pt-1">
-                <Link to="/sobre-nosotros" className="hover:text-white transition-colors">Sobre Nosotros</Link>
-                <Link to="/contacto" className="hover:text-white transition-colors">Contacto</Link>
-                <Link to="/legal" className="hover:text-white transition-colors">Legal</Link>
+                <Link to="/legal" className="hover:text-white transition-colors">Protección de Datos (Ley 1581)</Link>
+                <Link to="/contacto" className="hover:text-white transition-colors">Línea de Soporte 24/7</Link>
+                <Link to="/sobre-nosotros" className="hover:text-white transition-colors">Acerca del Proyecto</Link>
               </nav>
             </div>
           </div>
