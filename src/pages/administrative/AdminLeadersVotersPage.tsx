@@ -735,6 +735,7 @@ export default function AdminLeadersVotersPage() {
             </form>
           </div>
         </div>
+        </div>
       )}
 
       {/* Create Voter Modal */}
@@ -919,6 +920,7 @@ export default function AdminLeadersVotersPage() {
               </div>
             </form>
           </div>
+        </div>
         </div>
       )}
     </div>
