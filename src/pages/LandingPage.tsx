@@ -314,7 +314,8 @@ export default function LandingPage() {
               viewport={{ once: false, margin: '-40px' }}
               transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -5, borderColor: 'rgba(99, 102, 241, 0.4)', boxShadow: '0 20px 40px -10px rgba(99, 102, 241, 0.1)' }}
-              className="sm:col-span-2 p-8 rounded-[2rem] bg-indigo-600/10 border border-indigo-500/20 space-y-6 transition-colors group cursor-default"
+              onClick={() => { setActiveTabDemo('ai'); document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); }}
+              className="sm:col-span-2 p-8 rounded-[2rem] bg-indigo-600/10 border border-indigo-500/20 space-y-6 transition-colors group cursor-pointer"
             >
               <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}>
                 <Bot className="w-12 h-12 text-indigo-500 group-hover:text-indigo-400 transition-colors" />
@@ -331,7 +332,8 @@ export default function LandingPage() {
               viewport={{ once: false, margin: '-40px' }}
               transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -5, borderColor: 'rgba(168, 85, 247, 0.4)', boxShadow: '0 20px 40px -10px rgba(168, 85, 247, 0.1)' }}
-              className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-6 transition-colors group cursor-default"
+              onClick={() => { setActiveTabDemo('crm'); document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); }}
+              className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-6 transition-colors group cursor-pointer"
             >
               <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut', delay: 0.5 }}>
                 <Users className="w-12 h-12 text-purple-500 group-hover:text-purple-400 transition-colors" />
@@ -348,7 +350,8 @@ export default function LandingPage() {
               viewport={{ once: false, margin: '-40px' }}
               transition={{ duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -5, borderColor: 'rgba(236, 72, 153, 0.4)', boxShadow: '0 20px 40px -10px rgba(236, 72, 153, 0.1)' }}
-              className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-6 transition-colors group cursor-default"
+              onClick={() => { setActiveTabDemo('territory'); document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); }}
+              className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-6 transition-colors group cursor-pointer"
             >
               <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut', delay: 1 }}>
                 <MapPin className="w-12 h-12 text-pink-500 group-hover:text-pink-400 transition-colors" />
@@ -365,7 +368,8 @@ export default function LandingPage() {
               viewport={{ once: false, margin: '-40px' }}
               transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -5, borderColor: 'rgba(16, 185, 129, 0.4)', boxShadow: '0 20px 40px -10px rgba(16, 185, 129, 0.1)' }}
-              className="sm:col-span-2 p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-6 transition-colors group cursor-default"
+              onClick={() => { setActiveTabDemo('e14'); document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); }}
+              className="sm:col-span-2 p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-6 transition-colors group cursor-pointer"
             >
               <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 3.8, ease: 'easeInOut', delay: 0.2 }}>
                 <Vote className="w-12 h-12 text-emerald-500 group-hover:text-emerald-400 transition-colors" />
