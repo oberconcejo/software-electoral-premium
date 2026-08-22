@@ -26,6 +26,13 @@ import {
   Send,
   Check,
   Award,
+  Search,
+  Plus,
+  AlertTriangle,
+  UploadCloud,
+  FileText,
+  ScanText,
+  Activity,
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -59,6 +66,29 @@ export default function LandingPage() {
     'Análisis Campaña Ganadora AI: Los jóvenes de 18-28 años en el sector urbano priorizan propuestas de empleo tecnológico y transporte sostenible. Se recomienda una campaña de video corto enfocada en 3 compromisos clave.'
   );
   const [isAiGenerating, setIsAiGenerating] = useState<boolean>(false);
+
+  // CRM Demo State
+  const [crmSearch, setCrmSearch] = useState('');
+  const [crmList, setCrmList] = useState([
+    { id: 1, name: 'María González', role: 'Líder', zone: 'Comuna 4', status: 'Activo' },
+    { id: 2, name: 'Carlos Ramírez', role: 'Votante', zone: 'Comuna 12', status: 'Pendiente' },
+    { id: 3, name: 'Ana López', role: 'Votante', zone: 'Comuna 4', status: 'Comprometido' },
+  ]);
+
+  const handleAddCrm = () => {
+    setCrmList([{ id: Date.now(), name: 'Nuevo Votante', role: 'Votante', zone: 'Por Asignar', status: 'Pendiente' }, ...crmList]);
+  };
+
+  // E-14 Demo State
+  const [e14Status, setE14Status] = useState<'idle' | 'scanning' | 'alert'>('idle');
+  const handleScanE14 = () => {
+    if (e14Status === 'idle') {
+      setE14Status('scanning');
+      setTimeout(() => setE14Status('alert'), 2000);
+    } else {
+      setE14Status('idle');
+    }
+  };
 
   useEffect(() => {
     // Siempre iniciar en el top al recargar
@@ -456,10 +486,140 @@ export default function LandingPage() {
                   </div>
                 </motion.div>
               )}
-              {activeTabDemo !== 'ai' && (
-                <div className="flex items-center justify-center h-full text-slate-500 italic">
-                  Visualización interactiva del módulo de {activeTabDemo.toUpperCase()}
-                </div>
+              {activeTabDemo === 'crm' && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 rounded-2xl bg-purple-600/20 text-purple-400"><Users className="w-6 h-6" /></div>
+                      <div>
+                        <h4 className="text-xl font-bold">Gestión de Votantes</h4>
+                        <p className="text-slate-500 text-sm">Prueba el registro y búsqueda interactiva</p>
+                      </div>
+                    </div>
+                    <button onClick={handleAddCrm} className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-xl text-sm font-bold transition-colors">
+                      <Plus className="w-4 h-4" /> Registrar Nuevo
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                    <input 
+                      type="text" 
+                      placeholder="Buscar por nombre o cédula..." 
+                      value={crmSearch}
+                      onChange={(e) => setCrmSearch(e.target.value)}
+                      className="w-full bg-black/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                  <div className="space-y-2 max-h-[220px] overflow-y-auto pr-2 custom-scrollbar">
+                    {crmList.filter(item => item.name.toLowerCase().includes(crmSearch.toLowerCase())).map(item => (
+                      <div key={item.id} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                        <div>
+                          <p className="font-semibold">{item.name}</p>
+                          <p className="text-xs text-slate-500">{item.role} • {item.zone}</p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          item.status === 'Activo' || item.status === 'Comprometido' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+                        }`}>
+                          {item.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+              {activeTabDemo === 'territory' && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                  <div className="flex items-center gap-4 border-b border-white/5 pb-4">
+                    <div className="p-3 rounded-2xl bg-pink-600/20 text-pink-400"><MapPin className="w-6 h-6" /></div>
+                    <div>
+                      <h4 className="text-xl font-bold">Control Territorial</h4>
+                      <p className="text-slate-500 text-sm">Monitoreo de metas de votación por zona</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      { name: 'Comuna 1 - Norte', goal: 4500, current: 3200, progress: 71 },
+                      { name: 'Comuna 4 - Centro', goal: 8000, current: 7850, progress: 98 },
+                      { name: 'Comuna 12 - Sur', goal: 3500, current: 1200, progress: 34 },
+                      { name: 'Corregimiento', goal: 1500, current: 400, progress: 26 },
+                    ].map(zone => (
+                      <div key={zone.name} className="p-5 bg-white/5 rounded-2xl border border-white/10 hover:border-pink-500/30 transition-colors group">
+                        <div className="flex justify-between items-end mb-3">
+                          <h5 className="font-bold text-slate-200">{zone.name}</h5>
+                          <span className="text-xs font-mono text-pink-400">{zone.progress}%</span>
+                        </div>
+                        <div className="h-2 bg-black rounded-full overflow-hidden mb-2">
+                          <motion.div 
+                            initial={{ width: 0 }} 
+                            whileInView={{ width: `${zone.progress}%` }} 
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            className={`h-full ${zone.progress > 80 ? 'bg-emerald-500' : zone.progress > 50 ? 'bg-pink-500' : 'bg-amber-500'}`} 
+                          />
+                        </div>
+                        <p className="text-xs text-slate-500 text-right">{zone.current} / {zone.goal} votos asegurados</p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+              {activeTabDemo === 'e14' && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                  <div className="flex items-center gap-4 border-b border-white/5 pb-4">
+                    <div className="p-3 rounded-2xl bg-emerald-600/20 text-emerald-400"><ScanText className="w-6 h-6" /></div>
+                    <div>
+                      <h4 className="text-xl font-bold">Auditoría E-14 (Día D)</h4>
+                      <p className="text-slate-500 text-sm">Simulador de detección de fraude vía OCR</p>
+                    </div>
+                  </div>
+                  
+                  {e14Status === 'idle' && (
+                    <div className="border-2 border-dashed border-white/10 rounded-2xl p-10 flex flex-col items-center justify-center text-center space-y-4 hover:border-emerald-500/50 transition-colors cursor-pointer" onClick={handleScanE14}>
+                      <UploadCloud className="w-12 h-12 text-slate-600" />
+                      <div>
+                        <p className="font-semibold text-slate-300">Sube una foto del Acta E-14</p>
+                        <p className="text-sm text-slate-500 mt-1">Haz clic aquí para simular el análisis OCR</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {e14Status === 'scanning' && (
+                    <div className="border-2 border-emerald-500/30 bg-emerald-500/10 rounded-2xl p-10 flex flex-col items-center justify-center text-center space-y-4">
+                      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
+                        <Activity className="w-12 h-12 text-emerald-400" />
+                      </motion.div>
+                      <div>
+                        <p className="font-semibold text-emerald-400">Analizando acta con IA...</p>
+                        <p className="text-sm text-emerald-400/70 mt-1">Extrayendo firmas y conteos numéricos</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {e14Status === 'alert' && (
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="border-2 border-red-500/50 bg-red-500/10 rounded-2xl p-6 space-y-4">
+                      <div className="flex items-start gap-4">
+                        <AlertTriangle className="w-8 h-8 text-red-500 shrink-0" />
+                        <div>
+                          <h5 className="font-bold text-red-400 text-lg">¡DISCREPANCIA DETECTADA!</h5>
+                          <p className="text-sm text-red-300/80">El conteo reportado por los testigos no coincide con el acta oficial de la mesa.</p>
+                        </div>
+                      </div>
+                      <div className="bg-black/50 rounded-xl p-4 flex justify-around">
+                        <div className="text-center">
+                          <p className="text-xs text-slate-500 mb-1">Votos Testigo</p>
+                          <p className="text-2xl font-mono text-emerald-400 font-bold">45</p>
+                        </div>
+                        <div className="w-px bg-white/10"></div>
+                        <div className="text-center">
+                          <p className="text-xs text-slate-500 mb-1">Acta E-14 Escaneada</p>
+                          <p className="text-2xl font-mono text-red-400 font-bold">15</p>
+                        </div>
+                      </div>
+                      <button onClick={handleScanE14} className="w-full py-3 bg-red-600/20 text-red-400 hover:bg-red-600/30 font-bold rounded-xl text-sm transition-colors">
+                        Revisar Evidencia Fotográfica
+                      </button>
+                    </motion.div>
+                  )}
+                </motion.div>
               )}
             </motion.div>
           </div>
