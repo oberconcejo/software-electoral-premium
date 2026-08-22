@@ -90,6 +90,9 @@ export default function LandingPage() {
     }
   };
 
+  // Terms and Conditions Modal State
+  const [showTerms, setShowTerms] = useState(false);
+
   useEffect(() => {
     // Siempre iniciar en el top al recargar
     if ('scrollRestoration' in window.history) {
@@ -1105,6 +1108,7 @@ export default function LandingPage() {
                 <h4 className="font-bold text-sm text-white uppercase tracking-wider">Soporte y Legal</h4>
               </div>
               <nav className="flex flex-col gap-2.5 text-slate-400 text-sm pt-1">
+                <button onClick={() => setShowTerms(true)} className="text-left hover:text-white transition-colors">Términos y Condiciones</button>
                 <Link to="/legal" className="hover:text-white transition-colors">Protección de Datos (Ley 1581)</Link>
                 <Link to="/contacto" className="hover:text-white transition-colors">Línea de Soporte 24/7</Link>
                 <Link to="/sobre-nosotros" className="hover:text-white transition-colors">Acerca del Proyecto</Link>
@@ -1132,6 +1136,74 @@ export default function LandingPage() {
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
           </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Términos y Condiciones Modal */}
+      <AnimatePresence>
+        {showTerms && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              onClick={() => setShowTerms(false)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-3xl bg-[#111] border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl max-h-[85vh] overflow-y-auto custom-scrollbar"
+            >
+              <button 
+                onClick={() => setShowTerms(false)}
+                className="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              
+              <div className="space-y-6 text-slate-300">
+                <h2 className="text-3xl font-black text-white">Términos y Condiciones de Uso</h2>
+                <p className="text-sm text-slate-500">Última actualización: Agosto 2026</p>
+                
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-white">1. Aceptación de los Términos</h3>
+                  <p className="leading-relaxed">
+                    Al acceder y utilizar este Software Electoral, usted acepta estar sujeto a estos términos y condiciones. Si no está de acuerdo con alguna parte de estos términos, no podrá utilizar nuestros servicios. El software está diseñado estrictamente para apoyar la gestión de campañas políticas dentro del marco legal colombiano.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-white">2. Uso de la Plataforma</h3>
+                  <p className="leading-relaxed">
+                    Se otorga una licencia limitada, no exclusiva e intransferible para usar el software. El usuario se compromete a no utilizar el software para actividades ilícitas, campañas de desinformación masiva (fake news), compra de votos u otras prácticas prohibidas por el Consejo Nacional Electoral (CNE).
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-white">3. Privacidad y Datos Personales (Ley 1581 de 2012)</h3>
+                  <p className="leading-relaxed">
+                    El cliente es el único responsable de la recolección legal de los datos de votantes y simpatizantes. El cliente garantiza que ha obtenido la autorización expresa de los titulares de la información de acuerdo con la Ley 1581 de 2012 de Protección de Datos Personales en Colombia. Nosotros operamos como encargados del tratamiento, ofreciendo la infraestructura tecnológica.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-white">4. Propiedad Intelectual</h3>
+                  <p className="leading-relaxed">
+                    Todos los derechos de propiedad intelectual, algoritmos del Copiloto IA, interfaces, y metodologías de estructuración territorial son propiedad exclusiva de los desarrolladores del Software Electoral. La suscripción al servicio no transfiere la propiedad del código fuente.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-white">5. Disponibilidad del Servicio (SLA)</h3>
+                  <p className="leading-relaxed">
+                    Nos esforzamos por mantener un tiempo de actividad del 99.9%. Sin embargo, no somos responsables por interrupciones causadas por factores externos (fallas de proveedores de nube, caídas generales de internet) especialmente durante el "Día D". El soporte 24/7 se activará 72 horas antes de los comicios para planes compatibles.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
