@@ -132,7 +132,6 @@ export default function LandingPage() {
             variant="brand" 
             withText={true} 
             title="SOFTWARE" 
-            subtitle="Plataforma Electoral Inteligente"
             onClick={() => navigate('/')} 
           />
         </div>
