@@ -37,59 +37,18 @@ export interface SWOTState {
   amenazas: SWOTCategoryData;
 }
 
-const DEFAULT_SWOT: SWOTState = {
-  fortalezas: {
-    description: 'Ventajas competitivas internas, solvencia ética y capacidades técnicas del candidato.',
-    availableVariables: [
-      'Trayectoria ética intachable (0 antecedentes judicial/fiscal)',
-      'Experiencia técnica comprobada en gestión pública o privada',
-      'Alto nivel de reconocimiento y carisma territorial',
-      'Sólido respaldo de sectores académicos, juveniles e independientes',
-      'Capacidad de oratoria y debate político de alto nivel',
-      'Equipo técnico interdisciplinario altamente calificado'
-    ],
-    selectedVariables: []
-  },
-  oportunidades: {
-    description: 'Variables del entorno exterior favorables para el crecimiento de la campaña electoral.',
-    availableVariables: [
-      'Alto descontento ciudadano con la administración o maquinaria saliente',
-      'Crecimiento del voto de opinión e independiente en la zona',
-      'Alianzas estratégicas con JAC, líderes comunales y gremios locales',
-      'Coyuntura favorable para propuestas de tecnología e innovación',
-      'Cobertura mediática abierta a propuestas disruptivas'
-    ],
-    selectedVariables: []
-  },
-  debilidades: {
-    description: 'Factores internos a reforzar o estructurar en la campaña y su despliegue.',
-    availableVariables: [
-      'Reconocimiento territorial bajo en comunas/veredas periféricas',
-      'Estructura de logística y movilización en proceso de consolidación',
-      'Presupuesto inicial ajustado frente a candidaturas de maquinarias',
-      'Bajo posicionamiento en sectores gremiales tradicionales',
-      'Red de testigos electorales en fase temprana de reclutamiento'
-    ],
-    selectedVariables: []
-  },
-  amenazas: {
-    description: 'Riesgos del entorno, oposición y factores externos adversos.',
-    availableVariables: [
-      'Ataques sistemáticos de desinformación y guerra sucia de opositores',
-      'Uso indebido de recursos públicos y maquinarias clientelares por rivales',
-      'Riesgo de alto abstencionismo en puestos de votación clave',
-      'Prácticas clientelares y compra de votos en el territorio',
-      'Polarización política extrema impulsada por medios tradicionales'
-    ],
-    selectedVariables: []
-  }
+const EMPTY_SWOT: SWOTState = {
+  fortalezas: { description: '', availableVariables: [], selectedVariables: [] },
+  oportunidades: { description: '', availableVariables: [], selectedVariables: [] },
+  debilidades: { description: '', availableVariables: [], selectedVariables: [] },
+  amenazas: { description: '', availableVariables: [], selectedVariables: [] }
 };
 
 export function useCandidateProfile() {
   const { user } = useAuth();
   const { activeCandidate, loading: globalLoading, refreshGlobalData, setActiveCandidate } = useGlobalApp();
   const [candidate, setCandidate] = useState<CandidateProfile | null>(activeCandidate as CandidateProfile | null);
-  const [swot, setSwot] = useState<SWOTState>(DEFAULT_SWOT);
+  const [swot, setSwot] = useState<SWOTState>(EMPTY_SWOT);
   const [loading, setLoading] = useState(true);
   const [savingCandidate, setSavingCandidate] = useState(false);
   const [savingSwot, setSavingSwot] = useState(false);
@@ -126,11 +85,11 @@ export function useCandidateProfile() {
             }
 
             const parseCategory = (key: SWOTCategoryKey): SWOTCategoryData => {
-              const selected = Array.isArray(raw[key]) ? raw[key] : DEFAULT_SWOT[key].selectedVariables;
-              const available = meta?.availableVariables?.[key] || DEFAULT_SWOT[key].availableVariables;
+              const selected = Array.isArray(raw[key]) ? raw[key] : [];
+              const available = meta?.availableVariables?.[key] || [];
               // Ensure all selected are also in available
               const mergedAvailable = Array.from(new Set([...available, ...selected]));
-              const desc = meta?.descriptions?.[key] || DEFAULT_SWOT[key].description;
+              const desc = meta?.descriptions?.[key] || '';
               return {
                 description: desc,
                 availableVariables: mergedAvailable,
@@ -145,10 +104,16 @@ export function useCandidateProfile() {
               debilidades: parseCategory('debilidades'),
               amenazas: parseCategory('amenazas')
             });
+          } else {
+            // API returned empty or no SWOT
+            setSwot(EMPTY_SWOT);
           }
+        } else {
+          setSwot(EMPTY_SWOT);
         }
       } catch (err) {
         console.warn('Could not fetch SWOT from API:', err);
+        setSwot(EMPTY_SWOT);
       }
 
     } catch (error) {

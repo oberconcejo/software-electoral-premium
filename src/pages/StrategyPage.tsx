@@ -36,6 +36,7 @@ import { Diagnostic360Section } from '@/src/modules/strategy/components/Diagnost
 import { CommunicationsSection } from '@/src/modules/strategy/components/CommunicationsSection';
 import { DataAnalysisSection } from '@/src/modules/strategy/components/DataAnalysisSection';
 import { AgendaCalendarSection } from '@/src/modules/strategy/components/AgendaCalendarSection';
+import { NarrativeSection } from '@/src/modules/strategy/components/NarrativeSection';
 
 type StrategyTab = 
   | 'diagnostic360'
@@ -52,57 +53,6 @@ type StrategyTab =
 export default function StrategyPage() {
   const [searchParams] = useSearchParams();
   const activeTab = (searchParams.get('tab') as StrategyTab) || 'diagnostic360';
-
-  // Interactive local states for Strategy functions (Fases progresivas)
-  const [programPillars, setProgramPillars] = useState<Array<{ id: string; title: string; desc: string }>>([]);
-  const [newPillarTitle, setNewPillarTitle] = useState('');
-  const [newPillarDesc, setNewPillarDesc] = useState('');
-  const [showAddPillar, setShowAddPillar] = useState(false);
-
-  const [narrativeItems, setNarrativeItems] = useState<Array<{ id: string; topic: string; message: string }>>([]);
-  const [newTopic, setNewTopic] = useState('');
-  const [newMessage, setNewMessage] = useState('');
-  const [showAddNarrative, setShowAddNarrative] = useState(false);
-
-  const [candidateData, setCandidateData] = useState<{
-    name: string;
-    tagline: string;
-    profession: string;
-    experience: string;
-    strengths: string;
-  }>({
-    name: '',
-    tagline: '',
-    profession: '',
-    experience: '',
-    strengths: ''
-  });
-
-  const [uploadedCv, setUploadedCv] = useState<string | null>(null);
-
-  const handleAddPillar = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newPillarTitle.trim()) return;
-    setProgramPillars(prev => [
-      ...prev,
-      { id: Date.now().toString(), title: newPillarTitle.trim(), desc: newPillarDesc.trim() }
-    ]);
-    setNewPillarTitle('');
-    setNewPillarDesc('');
-    setShowAddPillar(false);
-  };
-
-  const handleAddNarrative = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTopic.trim() || !newMessage.trim()) return;
-    setNarrativeItems(prev => [
-      ...prev,
-      { id: Date.now().toString(), topic: newTopic.trim(), message: newMessage.trim() }
-    ]);
-    setNewTopic('');
-    setNewMessage('');
-    setShowAddNarrative(false);
-  };
 
   return (
     <div className="space-y-6 pb-12">
@@ -182,38 +132,14 @@ export default function StrategyPage() {
                 </div>
               </div>
 
-              <div className="border-2 border-dashed border-white/10 rounded-3xl p-10 text-center space-y-4 hover:border-indigo-500/50 transition-colors">
-                <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mx-auto">
-                  <UploadCloud className="w-8 h-8" />
+              <div className="rounded-[28px] bg-[#090a10]/60 border border-white/[0.04] p-12 flex flex-col items-center justify-center text-center min-h-[300px] space-y-3">
+                <div className="w-14 h-14 flex items-center justify-center text-slate-600 mb-2">
+                  <UploadCloud className="w-12 h-12 stroke-[1.25]" />
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-base font-bold text-white">Cargar Hoja de Vida (PDF o DOCX)</h4>
-                  <p className="text-xs text-slate-500">Arrastre su documento o seleccione desde su dispositivo</p>
-                </div>
-                <input 
-                  type="file" 
-                  accept=".pdf,.docx,.doc" 
-                  className="hidden" 
-                  id="cv-upload-input"
-                  onChange={(e) => {
-                    if (e.target.files?.[0]) {
-                      setUploadedCv(e.target.files[0].name);
-                    }
-                  }}
-                />
-                <label 
-                  htmlFor="cv-upload-input"
-                  className="inline-block px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl cursor-pointer transition-all shadow-lg shadow-indigo-600/20"
-                >
-                  Seleccionar Archivo
-                </label>
-
-                {uploadedCv && (
-                  <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center gap-2 text-emerald-400 text-sm font-medium">
-                    <FileCheck className="w-4 h-4" />
-                    Documento cargado: {uploadedCv}
-                  </div>
-                )}
+                <h3 className="text-lg font-bold text-slate-300">Funcionalidad en desarrollo</h3>
+                <p className="text-sm text-slate-500 max-w-md mx-auto">
+                  El módulo de análisis automático de CV con Inteligencia Artificial estará disponible en la próxima versión.
+                </p>
               </div>
             </Card>
           </motion.div>
@@ -255,79 +181,7 @@ export default function StrategyPage() {
             exit={{ opacity: 0, y: -15 }}
             className="space-y-6"
           >
-            <Card className="rounded-[32px] bg-[#111114] border-white/5 p-8 shadow-xl">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                    <MessageSquareQuote className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white">Narrativa & Discurso</h3>
-                    <p className="text-xs text-slate-500 font-medium">Líneas discursivas, mensajes clave y argumentos centrales de campaña</p>
-                  </div>
-                </div>
-                <Button 
-                  size="sm" 
-                  onClick={() => setShowAddNarrative(!showAddNarrative)}
-                  className="gap-2 bg-indigo-600 hover:bg-indigo-500 text-xs font-bold"
-                >
-                  <Plus className="w-4 h-4" /> Agregar Mensaje Clave
-                </Button>
-              </div>
-
-              {showAddNarrative && (
-                <form onSubmit={handleAddNarrative} className="p-6 bg-white/5 rounded-2xl border border-white/10 mb-6 space-y-4">
-                  <h4 className="text-sm font-bold text-white">Nuevo Mensaje o Eje Discursivo</h4>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Eje / Audiencia</label>
-                    <input 
-                      type="text" 
-                      value={newTopic}
-                      onChange={(e) => setNewTopic(e.target.value)}
-                      placeholder="Ej. Jóvenes y Oportunidades Laborales"
-                      className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Mensaje Clave y Argumentos</label>
-                    <textarea 
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Redacción del mensaje central y argumentos de apoyo..."
-                      rows={3}
-                      className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
-                      required
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="submit" size="sm" className="bg-indigo-600 hover:bg-indigo-500 text-xs font-bold">Guardar</Button>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => setShowAddNarrative(false)} className="text-xs">Cancelar</Button>
-                  </div>
-                </form>
-              )}
-
-              {narrativeItems.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {narrativeItems.map(item => (
-                    <div key={item.id} className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="primary">{item.topic}</Badge>
-                      </div>
-                      <p className="text-sm text-slate-300 italic">"{item.message}"</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="p-12 text-center bg-white/[0.01] rounded-[28px] border border-dashed border-white/5 space-y-3">
-                  <MessageSquareQuote className="w-12 h-12 text-slate-700 mx-auto" />
-                  <h4 className="text-lg font-bold text-slate-400">No hay información disponible todavía</h4>
-                  <p className="text-sm text-slate-500 max-w-md mx-auto">
-                    Aún no se han configurado líneas discursivas. Registre un mensaje clave para comenzar la construcción de narrativa.
-                  </p>
-                </div>
-              )}
-            </Card>
+            <NarrativeSection />
           </motion.div>
         )}
 

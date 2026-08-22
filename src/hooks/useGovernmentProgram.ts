@@ -105,9 +105,8 @@ export function useGovernmentProgram() {
   const PROPOSALS_KEY = `gov_program_proposals_${tenantId}`;
   const LEGAL_KEY = `gov_program_legal_${tenantId}`;
 
-  // Load all initial program data
   const loadData = useCallback(async () => {
-    if (!supabase || !tenantId || tenantId === 'default_tenant') {
+    if (!tenantId || tenantId === 'default_tenant') {
       setLoading(false);
       return;
     }
@@ -116,15 +115,42 @@ export function useGovernmentProgram() {
     setError(null);
 
     try {
-      // 1. Authoritative Supabase fetch
-      const [progRes, axesRes, propRes] = await Promise.all([
-        supabase.from('government_programs').select('*').eq('client_id', tenantId).maybeSingle(),
-        supabase.from('strategic_axes').select('*').order('prioridad', { ascending: true }),
-        supabase.from('proposals').select('*').order('created_at', { ascending: true })
-      ]);
+      const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: { session: null } };
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
 
-      if (progRes.data) {
-        const p = progRes.data;
+      const res = await fetch('/api/strategy/program', { headers });
+      
+      if (!res.ok) {
+        // Fallback to empty state if endpoint is not available yet
+        setProgramInfo({
+          id: `gov_prog_${tenantId}`,
+          clientId: tenantId,
+          title: '',
+          period: '',
+          territory: '',
+          candidateName: '',
+          partyCoalition: '',
+          slogan: '',
+          status: 'BORRADOR',
+          legalDeadline: '',
+          historicalContext: '',
+          diagnosticSummary: '',
+          lastSyncDate: null,
+          createdAt: new Date().toISOString()
+        });
+        setAxes([]);
+        setProposals([]);
+        setLoading(false);
+        return;
+      }
+
+      const json = await res.json();
+      
+      if (json.program) {
+        const p = json.program;
         setProgramInfo({
           id: p.id,
           clientId: p.client_id,
@@ -144,8 +170,8 @@ export function useGovernmentProgram() {
         });
       }
 
-      if (axesRes.data) {
-        setAxes(axesRes.data.map((a: any) => ({
+      if (json.axes && Array.isArray(json.axes)) {
+        setAxes(json.axes.map((a: any) => ({
           id: a.id,
           programId: a.program_id,
           clientId: tenantId,
@@ -157,13 +183,15 @@ export function useGovernmentProgram() {
           createdAt: a.created_at
         })));
         
-        if (axesRes.data.length > 0 && !selectedAxisId) {
-          setSelectedAxisId(axesRes.data[0].id);
+        if (json.axes.length > 0 && !selectedAxisId) {
+          setSelectedAxisId(json.axes[0].id);
         }
+      } else {
+        setAxes([]);
       }
 
-      if (propRes.data) {
-        setProposals(propRes.data.map((pr: any) => ({
+      if (json.proposals && Array.isArray(json.proposals)) {
+        setProposals(json.proposals.map((pr: any) => ({
           id: pr.id,
           axisId: pr.axis_id,
           programId: '', 
@@ -179,11 +207,31 @@ export function useGovernmentProgram() {
           priority: pr.prioridad || 'ALTA',
           createdAt: pr.created_at
         })));
+      } else {
+        setProposals([]);
       }
 
     } catch (err: any) {
-      console.error('Error loading government program:', err);
-      setError('No fue posible cargar el Programa de Gobierno real.');
+      console.warn('Could not fetch Program from API, falling back to empty state:', err);
+      // Fallback to empty state
+      setProgramInfo({
+        id: `gov_prog_${tenantId}`,
+        clientId: tenantId,
+        title: '',
+        period: '',
+        territory: '',
+        candidateName: '',
+        partyCoalition: '',
+        slogan: '',
+        status: 'BORRADOR',
+        legalDeadline: '',
+        historicalContext: '',
+        diagnosticSummary: '',
+        lastSyncDate: null,
+        createdAt: new Date().toISOString()
+      });
+      setAxes([]);
+      setProposals([]);
     } finally {
       setLoading(false);
     }
