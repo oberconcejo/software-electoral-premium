@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   Users, 
   UserCheck, 
@@ -34,7 +35,17 @@ export default function AdminLeadersVotersPage() {
   const { leaders, voters, refresh, loading: loadingData } = useAdministrativeData();
   const { zones, subdivisions, loading: loadingTerritory, loadingSubdivisions, refreshSubdivisions } = useTerritory();
   
-  const [activeTab, setActiveTab] = useState<'leaders' | 'voters'>('leaders');
+  const location = useLocation();
+  const initialTab = location.pathname.includes('/votantes') ? 'voters' : 'leaders';
+  const [activeTab, setActiveTab] = useState<'leaders' | 'voters'>(initialTab);
+
+  useEffect(() => {
+    if (location.pathname.includes('/votantes')) {
+      setActiveTab('voters');
+    } else if (location.pathname.includes('/lideres')) {
+      setActiveTab('leaders');
+    }
+  }, [location.pathname]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedComuna, setSelectedComuna] = useState<string>('ALL');
   const [selectedIntention, setSelectedIntention] = useState<string>('ALL');

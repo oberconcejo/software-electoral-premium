@@ -49,16 +49,24 @@ export const administrativeNavSections: AdminNavSection[] = [
         description: 'Administración de roles y matriz de permisos'
       },
       {
-        id: 'admin-lideres-votantes',
-        label: '3. Líderes / Votantes',
+        id: 'admin-lideres',
+        label: '3. Líderes',
         icon: Users,
-        path: '/gestion-administrativa/lideres-votantes',
+        path: '/gestion-administrativa/lideres',
         functionCode: 'LEADERS_VOTERS',
-        description: 'Censo de votantes, líderes barriales y referidos'
+        description: 'Censo de líderes barriales y coordinadores'
+      },
+      {
+        id: 'admin-votantes',
+        label: '4. Votantes',
+        icon: Users,
+        path: '/gestion-administrativa/votantes',
+        functionCode: 'LEADERS_VOTERS',
+        description: 'Censo de votantes y referidos'
       },
       {
         id: 'admin-presupuesto-cne',
-        label: '4. Presupuesto / CNE',
+        label: '5. Presupuesto / CNE',
         icon: CreditCard,
         path: '/gestion-administrativa/presupuesto-cne',
         functionCode: 'BUDGET_CNE',
@@ -66,7 +74,7 @@ export const administrativeNavSections: AdminNavSection[] = [
       },
       {
         id: 'admin-campana',
-        label: '5. Gestión de Campaña',
+        label: '6. Gestión de Campaña',
         icon: Building2,
         path: '/gestion-administrativa/campana',
         functionCode: 'CAMPAIGN_MANAGEMENT',
@@ -74,7 +82,7 @@ export const administrativeNavSections: AdminNavSection[] = [
       },
       {
         id: 'admin-testigos',
-        label: '6. Gestión de Testigos',
+        label: '7. Gestión de Testigos',
         icon: BookmarkCheck,
         path: '/gestion-administrativa/testigos',
         functionCode: 'WITNESSES_MANAGEMENT',
@@ -82,7 +90,7 @@ export const administrativeNavSections: AdminNavSection[] = [
       },
       {
         id: 'admin-jurados',
-        label: '7. Jurados Electorales',
+        label: '8. Jurados Electorales',
         icon: CheckSquare,
         path: '/gestion-administrativa/jurados',
         functionCode: 'JURORS_MANAGEMENT',
@@ -90,7 +98,7 @@ export const administrativeNavSections: AdminNavSection[] = [
       },
       {
         id: 'admin-encuestas',
-        label: '8. Encuestas y Sondeos',
+        label: '9. Encuestas y Sondeos',
         icon: PieChart,
         path: '/gestion-administrativa/encuestas',
         functionCode: 'POLLS_SURVEYS',
@@ -98,7 +106,7 @@ export const administrativeNavSections: AdminNavSection[] = [
       },
       {
         id: 'admin-configuracion',
-        label: '9. Configuración',
+        label: '10. Configuración',
         icon: Settings,
         path: '/gestion-administrativa/configuracion',
         functionCode: 'SYSTEM_SETTINGS',

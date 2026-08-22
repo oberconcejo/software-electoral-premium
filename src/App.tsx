@@ -78,6 +78,8 @@ export default function App() {
           <Route index element={<Navigate to="/gestion-administrativa/inicio" replace />} />
           <Route path="inicio" element={<AdminDashboardView />} />
           <Route path="roles" element={<AdminRolesPage />} />
+          <Route path="lideres" element={<AdminLeadersVotersPage />} />
+          <Route path="votantes" element={<AdminLeadersVotersPage />} />
           <Route path="lideres-votantes" element={<AdminLeadersVotersPage />} />
           <Route path="presupuesto-cne" element={<AdminBudgetCNEPage />} />
           <Route path="campana" element={<AdminCampaignPage />} />
