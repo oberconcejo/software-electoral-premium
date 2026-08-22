@@ -75,7 +75,7 @@ export default function ModuleSelectionPage() {
       description: 'Control de recursos, presupuesto CNE y contabilidad electoral.',
       icon: ShieldCheck,
       color: 'indigo',
-      path: '/login?module=ADMINISTRATIVE'
+      path: '/gestion-administrativa'
     },
     {
       id: 'STRATEGY',
@@ -83,7 +83,7 @@ export default function ModuleSelectionPage() {
       description: 'Planeación de campaña, análisis FODA y metas electorales.',
       icon: Target,
       color: 'purple',
-      path: '/login?module=STRATEGY'
+      path: '/gestion-estrategica'
     },
     {
       id: 'TERRITORY',
@@ -91,7 +91,7 @@ export default function ModuleSelectionPage() {
       description: 'Control geográfico, georreferenciación y censo en tiempo real.',
       icon: MapIcon,
       color: 'emerald',
-      path: '/login?module=TERRITORY'
+      path: '/gestion-territorial'
     }
   ];
 
