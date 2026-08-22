@@ -593,6 +593,23 @@ async function startServer() {
         }
       }
 
+      // Fetch plan to determine if it's PREMIUM
+      let isPremium = false;
+      if (license.plan_id) {
+        const { data: planData } = await supabaseAdmin
+          .from('plans')
+          .select('code, name')
+          .eq('id', license.plan_id)
+          .single();
+        if (planData) {
+          const code = planData.code?.toUpperCase() || '';
+          const name = planData.name?.toUpperCase() || '';
+          if (code.includes('PREMIUM') || name.includes('PREMIUM')) {
+            isPremium = true;
+          }
+        }
+      }
+
       // 8. Check balance limit
       const { data: usage } = await supabaseAdmin
         .from('client_api_usage')
@@ -603,7 +620,7 @@ async function startServer() {
       const consumed = usage?.total_consumed || 0;
       const remaining = assigned - consumed;
 
-      if (remaining <= 0) {
+      if (!isPremium && remaining <= 0) {
         return res.status(402).json({
           success: false,
           status: 'LIMIT_REACHED',
@@ -717,7 +734,7 @@ async function startServer() {
           };
         }
 
-        // Charge 1 credit
+        // Se guarda el registro de auditoría y se cobran/cuentan los créditos
         const amount = 1;
         const previousBalance = remaining;
         const newBalance = remaining - amount;
@@ -746,19 +763,18 @@ async function startServer() {
           .single();
 
         if (queryRecord) {
-          // Update usage
-          const consumed = usage?.total_consumed || 0;
+          // Update usage count for all plans (including Premium)
           await supabaseAdmin
             .from('client_api_usage')
             .update({
               total_consumed: consumed + amount,
               last_query_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
-              status: newBalance <= 0 ? 'LIMIT_REACHED' : 'ACTIVE'
+              status: (!isPremium && newBalance <= 0) ? 'LIMIT_REACHED' : 'ACTIVE'
             })
             .eq('client_id', clientId);
 
-          // Add transaction
+          // Add transaction record
           await supabaseAdmin
             .from('api_usage_transactions')
             .insert([{
@@ -772,7 +788,6 @@ async function startServer() {
               details: `Consulta de cédula: ${cleanCedula.slice(0, 3)}***`
             }]);
         }
-
         return res.json({
           success: true,
           data: normalizedData
