@@ -740,8 +740,8 @@ export default function AdminLeadersVotersPage() {
 
       {/* Create Voter Modal */}
       {isVoterModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-[95vw] lg:max-w-7xl h-[95vh] md:h-[90vh] shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-[95%] lg:max-w-7xl h-[95%] md:h-[90%] max-h-full shadow-2xl flex flex-col overflow-hidden">
             <div className="flex items-center justify-between border-b border-white/10 p-4 sm:p-5 md:p-6 shrink-0 bg-slate-900">
               <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-3">
                 <Vote className="w-5 h-5 md:w-6 md:h-6 text-indigo-400" />
