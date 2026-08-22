@@ -118,7 +118,7 @@ export default function ModuleSelectionPage() {
               showGlowHalo={true} 
             />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">SELECCIÓN DE MÓDULO</h1>
+          <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">INICIAR SESIÓN</h1>
           <p className="text-slate-400 text-base">Selecciona el módulo electoral al que deseas ingresar</p>
         </div>
 
@@ -168,19 +168,6 @@ export default function ModuleSelectionPage() {
             onClick={() => navigate('/')}
           >
             Volver a la página principal
-          </Button>
-          <Button 
-            variant="ghost" 
-            onClick={() => {
-              navigate('/');
-              setTimeout(() => {
-                logout();
-              }, 50);
-            }} 
-            className="text-slate-400 hover:text-rose-400 font-semibold"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Cerrar Sesión
           </Button>
         </div>
       </motion.div>
