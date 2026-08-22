@@ -45,6 +45,14 @@ export default function LandingPage() {
   const blobY1 = useTransform(scrollY, [0, 1000], [0, 150]);
   const blobY2 = useTransform(scrollY, [0, 1000], [0, -150]);
 
+  // Impact Calculator State
+  const [votantesObjetivo, setVotantesObjetivo] = useState<number>(50000);
+  const [lideresTerritorio, setLideresTerritorio] = useState<number>(120);
+
+  // Impact Calculations
+  const horasAhorradas = Math.round((votantesObjetivo / 1000) * 4.4 + lideresTerritorio * 1.0);
+  const alcanceEstimado = (12.5 + (lideresTerritorio / 15) + (votantesObjetivo / 6250)).toFixed(1);
+
   // AI Demo State
   const [aiPromptInput, setAiPromptInput] = useState<string>('Estrategia de comunicación para votantes jóvenes indecisos');
   const [aiResponse, setAiResponse] = useState<string>(
@@ -457,16 +465,32 @@ export default function LandingPage() {
               <div>
                 <label className="flex justify-between text-sm font-bold text-slate-300 mb-4">
                   <span>Votantes Objetivo</span>
-                  <span className="text-indigo-400">50,000</span>
+                  <span className="text-indigo-400">{votantesObjetivo.toLocaleString()}</span>
                 </label>
-                <input type="range" min="1000" max="100000" defaultValue="50000" className="w-full accent-indigo-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer" />
+                <input 
+                  type="range" 
+                  min="1000" 
+                  max="100000" 
+                  step="1000"
+                  value={votantesObjetivo}
+                  onChange={(e) => setVotantesObjetivo(Number(e.target.value))}
+                  className="w-full accent-indigo-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer" 
+                />
               </div>
               <div>
                 <label className="flex justify-between text-sm font-bold text-slate-300 mb-4">
                   <span>Líderes de Territorio</span>
-                  <span className="text-purple-400">120</span>
+                  <span className="text-purple-400">{lideresTerritorio.toLocaleString()}</span>
                 </label>
-                <input type="range" min="10" max="500" defaultValue="120" className="w-full accent-purple-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer" />
+                <input 
+                  type="range" 
+                  min="10" 
+                  max="500" 
+                  step="10"
+                  value={lideresTerritorio}
+                  onChange={(e) => setLideresTerritorio(Number(e.target.value))}
+                  className="w-full accent-purple-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer" 
+                />
               </div>
             </div>
             {/* Resultados */}
@@ -474,14 +498,14 @@ export default function LandingPage() {
               <div className="p-6 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-between">
                 <div>
                   <p className="text-slate-400 text-sm">Horas de gestión ahorradas / mes</p>
-                  <p className="text-3xl font-black text-white">+340 hrs</p>
+                  <p className="text-3xl font-black text-white">+{horasAhorradas} hrs</p>
                 </div>
                 <BarChart3 className="w-10 h-10 text-indigo-500" />
               </div>
               <div className="p-6 rounded-2xl bg-purple-600/10 border border-purple-500/20 flex items-center justify-between">
                 <div>
                   <p className="text-slate-400 text-sm">Aumento de alcance estimado</p>
-                  <p className="text-3xl font-black text-white">28.5%</p>
+                  <p className="text-3xl font-black text-white">{alcanceEstimado}%</p>
                 </div>
                 <Target className="w-10 h-10 text-purple-500" />
               </div>
