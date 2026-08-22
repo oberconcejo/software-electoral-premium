@@ -237,10 +237,27 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
               </button>
             </div>
           )}
+
+          {/* Mobile Only: User Info & Logout as list items */}
+          <div className="lg:hidden mt-6 pt-4 border-t border-white/5 space-y-2 pb-24">
+            {user && (
+              <div className="px-3 py-2 rounded-xl bg-white/[0.02] border border-white/5 mb-2">
+                <p className="text-xs font-bold text-white truncate">{user.name || user.email}</p>
+                <p className="text-[10px] text-slate-500 font-medium truncate">{user.email}</p>
+              </div>
+            )}
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all text-xs font-semibold group"
+            >
+              <LogOut className="w-4 h-4 flex-shrink-0 text-rose-400 group-hover:scale-110 transition-transform" />
+              <span>Cerrar Sesión</span>
+            </button>
+          </div>
         </div>
 
-        {/* Role Access Card & Module Switcher Footer */}
-        <div className="p-4 border-t border-slate-800/50 space-y-3 bg-[#0a0a0b]/95 pb-24 md:pb-4">
+        {/* Desktop Only: Role Access Card & Module Switcher Footer */}
+        <div className="hidden lg:block p-4 border-t border-slate-800/50 space-y-3 bg-[#0a0a0b]/95 pb-4">
           {(!isCollapsed || isOpen) && user && (
             <div className="px-3 py-2 rounded-xl bg-white/[0.02] border border-white/5 mb-1.5">
               <p className="text-xs font-bold text-white truncate">{user.name || user.email}</p>
