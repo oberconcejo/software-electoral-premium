@@ -87,11 +87,26 @@ export default function LandingPage() {
     if (!aiPromptInput.trim()) return;
     setIsAiGenerating(true);
     setAiResponse('Procesando consulta estratégica con inteligencia artificial...');
+    
     setTimeout(() => {
       setIsAiGenerating(false);
-      setAiResponse(
-        `Estrategia Generada para: "${aiPromptInput}":\n• Mensaje Fuerza: "Propuestas concretas con impacto medible".\n• Canal Recomendado: Redes sociales + Volanteo focalizado.\n• Tasa de conversión proyectada: +18.4% sobre electorado neutro.`
-      );
+      
+      const input = aiPromptInput.toLowerCase();
+      let response = '';
+
+      if (input.includes('joven') || input.includes('jóvenes')) {
+        response = `Estrategia Generada para: "${aiPromptInput}":\n• Mensaje Fuerza: "El futuro se construye hoy, con tecnología y oportunidades".\n• Canal Recomendado: TikTok, Instagram Reels y torneos de E-sports locales.\n• Tasa de conversión proyectada: +22.4% sobre primer votante.`;
+      } else if (input.includes('seguridad') || input.includes('crimen') || input.includes('delincuencia')) {
+        response = `Estrategia Generada para: "${aiPromptInput}":\n• Mensaje Fuerza: "Recuperemos la tranquilidad de nuestros barrios con mano firme y tecnología".\n• Canal Recomendado: Grupos de WhatsApp vecinales, Facebook y reuniones comunitarias.\n• Tasa de conversión proyectada: +15.8% en zonas vulnerables.`;
+      } else if (input.includes('mujer') || input.includes('madre')) {
+        response = `Estrategia Generada para: "${aiPromptInput}":\n• Mensaje Fuerza: "Emprendimiento y apoyo directo a las madres cabeza de hogar".\n• Canal Recomendado: Radio local, Facebook Ads y talleres presenciales.\n• Tasa de conversión proyectada: +19.2% en mujeres de 30-50 años.`;
+      } else if (input.includes('empleo') || input.includes('trabajo') || input.includes('econom')) {
+        response = `Estrategia Generada para: "${aiPromptInput}":\n• Mensaje Fuerza: "Más inversión, menos trámites: Trabajo para todos".\n• Canal Recomendado: LinkedIn, cuñas radiales matutinas y vallas en zonas industriales.\n• Tasa de conversión proyectada: +17.5% en población económicamente activa.`;
+      } else {
+        response = `Estrategia Generada para: "${aiPromptInput}":\n• Mensaje Fuerza: "Propuestas concretas con impacto medible en tu comunidad".\n• Canal Recomendado: Redes sociales combinadas con volanteo focalizado (Puerta a Puerta).\n• Tasa de conversión proyectada: +18.4% sobre electorado neutro.`;
+      }
+
+      setAiResponse(response);
     }, 1200);
   };
 
