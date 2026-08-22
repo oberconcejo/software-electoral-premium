@@ -580,9 +580,7 @@ export default function LandingPage() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-16 space-y-4"
           >
-            <span className="text-xs font-extrabold text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-3.5 py-1.5 rounded-full">
-              Transformación Digital
-            </span>
+
             <h2 className="text-4xl md:text-5xl font-black tracking-tight mt-3">
               La evolución de tu campaña
             </h2>
@@ -665,9 +663,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="text-center mb-16 space-y-4"
             >
-              <span className="text-xs font-extrabold text-purple-400 uppercase tracking-widest bg-purple-500/10 px-3.5 py-1.5 rounded-full">
-                Planes y Licencias
-              </span>
+
               <h2 className="text-4xl md:text-5xl font-black tracking-tight mt-3">
                 Inversión estratégica para tu victoria
               </h2>
