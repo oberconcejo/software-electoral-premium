@@ -355,10 +355,12 @@ export default function AdminLeadersVotersPage() {
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Users className="w-5 h-5 text-indigo-400" />
-            Líderes y Censo de Votantes
+            {activeTab === 'leaders' ? 'Líderes Barriales' : 'Censo de Votantes'}
           </h2>
           <p className="text-xs text-slate-400">
-            Control de coordinadores comunitarios, asignación territorial y registro de fidelización electoral.
+            {activeTab === 'leaders' 
+              ? 'Control de coordinadores comunitarios y asignación territorial.'
+              : 'Registro de fidelización electoral y referidos.'}
           </p>
         </div>
 
@@ -390,31 +392,6 @@ export default function AdminLeadersVotersPage() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-white/10 pb-2">
-        <button
-          onClick={() => setActiveTab('leaders')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'leaders' 
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' 
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <UserCheck className="w-4 h-4" />
-          Líderes Barriales ({leaders.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('voters')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'voters' 
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' 
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Vote className="w-4 h-4" />
-          Censo de Votantes ({voters.length})
-        </button>
-      </div>
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row items-center gap-3">
