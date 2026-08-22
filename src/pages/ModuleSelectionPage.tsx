@@ -118,7 +118,7 @@ export default function ModuleSelectionPage() {
               showGlowHalo={true} 
             />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">INICIAR SESIÓN</h1>
+          <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">SELECCIÓN DE MÓDULO</h1>
           <p className="text-slate-400 text-base">Selecciona el módulo electoral al que deseas ingresar</p>
         </div>
 
