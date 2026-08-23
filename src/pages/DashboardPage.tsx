@@ -22,10 +22,10 @@ export default function DashboardPage() {
   const { voters } = useVoters();
 
   const stats = [
-    { label: 'Votantes Registrados', value: voters.length.toString(), trend: 'En vivo', icon: Users, color: 'text-blue-500' },
-    { label: 'Testigos Electorales', value: '456', trend: '+8.2%', icon: FileCheck, color: 'text-emerald-500' },
-    { label: 'E14 Procesados', value: '89%', trend: '+15.3%', icon: BarChart3, color: 'text-purple-500' },
-    { label: 'Puestos Cubiertos', value: '42/50', trend: '84%', icon: MapPin, color: 'text-amber-500' },
+    { label: 'Votantes Registrados', value: voters.length.toString(), trend: 'En vivo', icon: Users, color: 'text-blue-500', path: '/gestion-administrativa/votantes' },
+    { label: 'Testigos Electorales', value: '456', trend: '+8.2%', icon: FileCheck, color: 'text-emerald-500', path: '/gestion-administrativa/testigos' },
+    { label: 'E14 Procesados', value: '89%', trend: '+15.3%', icon: BarChart3, color: 'text-purple-500', path: '/gestion-administrativa/inicio' },
+    { label: 'Puestos Cubiertos', value: '42/50', trend: '84%', icon: MapPin, color: 'text-amber-500', path: '/gestion-administrativa/testigos' },
   ];
 
   return (
@@ -53,17 +53,18 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/30 transition-all"
+            onClick={() => stat.path && navigate(stat.path)}
+            className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/[0.08] hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer group"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className={`p-3 rounded-xl bg-white/5 ${stat.color}`}>
+              <div className={`p-3 rounded-xl bg-white/5 ${stat.color} group-hover:scale-110 transition-transform`}>
                 <stat.icon className="w-6 h-6" />
               </div>
               <span className="text-xs font-bold text-emerald-400 px-2 py-1 rounded-full bg-emerald-400/10">
                 {stat.trend}
               </span>
             </div>
-            <p className="text-slate-400 text-sm font-medium mb-1">{stat.label}</p>
+            <p className="text-slate-400 text-sm font-medium mb-1 group-hover:text-slate-300 transition-colors">{stat.label}</p>
             <p className="text-2xl font-bold text-white">{stat.value}</p>
           </motion.div>
         ))}

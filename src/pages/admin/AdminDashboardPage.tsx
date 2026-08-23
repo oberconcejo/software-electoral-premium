@@ -235,9 +235,12 @@ export default function AdminDashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Card 1: Clientes Totales */}
-        <Card className="bg-[#111114] border-white/5 p-6 hover:border-white/10 transition-all rounded-2xl">
+        <Card 
+          onClick={() => navigate('/admin/clients')}
+          className="bg-[#111114] border-white/5 p-6 hover:border-indigo-500/50 hover:bg-white/[0.04] hover:-translate-y-1 hover:shadow-xl transition-all rounded-2xl cursor-pointer group"
+        >
           <div className="flex items-start justify-between">
-            <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform">
               <Globe className="w-6 h-6" />
             </div>
             {loading ? (
@@ -262,14 +265,17 @@ export default function AdminDashboardPage() {
                   : 'No disponible'}
               </h3>
             )}
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Clientes Totales</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 group-hover:text-slate-400 transition-colors">Clientes Totales</p>
           </div>
         </Card>
 
         {/* Card 2: Usuarios Activos */}
-        <Card className="bg-[#111114] border-white/5 p-6 hover:border-white/10 transition-all rounded-2xl">
+        <Card 
+          onClick={() => navigate('/admin/users')}
+          className="bg-[#111114] border-white/5 p-6 hover:border-emerald-500/50 hover:bg-white/[0.04] hover:-translate-y-1 hover:shadow-xl transition-all rounded-2xl cursor-pointer group"
+        >
           <div className="flex items-start justify-between">
-            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:scale-110 transition-transform">
               <Users className="w-6 h-6" />
             </div>
             {loading ? (
@@ -296,14 +302,17 @@ export default function AdminDashboardPage() {
                   : 'No disponible'}
               </h3>
             )}
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Usuarios Activos</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 group-hover:text-slate-400 transition-colors">Usuarios Activos</p>
           </div>
         </Card>
 
         {/* Card 3: Licencias Vigentes */}
-        <Card className="bg-[#111114] border-white/5 p-6 hover:border-white/10 transition-all rounded-2xl">
+        <Card 
+          onClick={() => navigate('/admin/plans')}
+          className="bg-[#111114] border-white/5 p-6 hover:border-amber-500/50 hover:bg-white/[0.04] hover:-translate-y-1 hover:shadow-xl transition-all rounded-2xl cursor-pointer group"
+        >
           <div className="flex items-start justify-between">
-            <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 group-hover:scale-110 transition-transform">
               <CreditCard className="w-6 h-6" />
             </div>
             {loading ? (
@@ -330,14 +339,17 @@ export default function AdminDashboardPage() {
                   : '0'}
               </h3>
             )}
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Licencias Vigentes</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 group-hover:text-slate-400 transition-colors">Licencias Vigentes</p>
           </div>
         </Card>
 
         {/* Card 4: Salud del Sistema */}
-        <Card className="bg-[#111114] border-white/5 p-6 hover:border-white/10 transition-all rounded-2xl">
+        <Card 
+          onClick={() => navigate('/admin/system')}
+          className="bg-[#111114] border-white/5 p-6 hover:border-cyan-500/50 hover:bg-white/[0.04] hover:-translate-y-1 hover:shadow-xl transition-all rounded-2xl cursor-pointer group"
+        >
           <div className="flex items-start justify-between">
-            <div className="p-3 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <div className="p-3 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 group-hover:scale-110 transition-transform">
               <Activity className="w-6 h-6" />
             </div>
             {loading ? (
@@ -356,7 +368,7 @@ export default function AdminDashboardPage() {
                 {data?.metrics.systemStatusLabel || 'Operacional'}
               </h3>
             )}
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Salud del Sistema</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 group-hover:text-slate-400 transition-colors">Salud del Sistema</p>
           </div>
         </Card>
       </div>
