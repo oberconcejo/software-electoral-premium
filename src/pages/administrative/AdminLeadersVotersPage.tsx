@@ -20,7 +20,13 @@ import {
   Edit2,
   Loader2,
   Eye,
-  EyeOff
+  EyeOff,
+  User,
+  CreditCard,
+  Map as MapIcon,
+  PenTool,
+  Info,
+  ArrowLeft
 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
 import { apiClient } from '@/src/lib/apiClient';
@@ -348,6 +354,558 @@ export default function AdminLeadersVotersPage() {
     document.body.removeChild(link);
   };
 
+  if (isLeaderModalOpen) {
+    return (
+      <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+              <div className="p-2 bg-indigo-500/10 rounded-xl">
+                <UserCheck className="w-6 h-6 text-indigo-400" />
+              </div>
+              Registrar Nuevo Líder
+            </h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Complete la información del líder y asigne sus metas electorales. Los campos marcados con <span className="text-rose-500">*</span> son obligatorios.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsLeaderModalOpen(false)}
+              className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-white/5 text-sm font-medium flex items-center gap-2 transition-all hover:-translate-x-1"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Volver
+            </button>
+            <button
+              onClick={handleSaveLeader}
+              disabled={saving}
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center gap-2 shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Save className="w-4 h-4" />
+              {saving ? 'Guardando...' : 'Guardar Líder'}
+            </button>
+          </div>
+        </div>
+
+        {message && (
+          <div className={`p-4 mb-6 rounded-2xl text-sm flex items-center gap-3 shadow-lg ${
+            message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+          }`}>
+            {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+            {message.text}
+          </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto space-y-6 pb-20 custom-scrollbar pr-2">
+          {/* Sección 1: Información Personal */}
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
+            <h3 className="text-base font-bold text-white mb-6 flex items-center">
+              <div className="w-1.5 h-5 bg-indigo-500 rounded-full mr-3"></div>
+              Sección 1: Información Personal
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Nombre Completo <span className="text-rose-500">*</span></label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. Carlos Mendoza"
+                    value={leaderForm.nombre}
+                    onChange={(e) => setLeaderForm({ ...leaderForm, nombre: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Cédula de Ciudadanía <span className="text-rose-500">*</span></label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <CreditCard className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. 1098234567"
+                    value={leaderForm.cedula}
+                    onChange={(e) => setLeaderForm({ ...leaderForm, cedula: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Teléfono</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Phone className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="tel"
+                    placeholder="Ej. 3124567890"
+                    value={leaderForm.telefono}
+                    onChange={(e) => setLeaderForm({ ...leaderForm, telefono: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Correo Electrónico</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Mail className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Ej. correo@ejemplo.com"
+                    value={leaderForm.email}
+                    onChange={(e) => setLeaderForm({ ...leaderForm, email: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sección 2: Ubicación */}
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
+            <h3 className="text-base font-bold text-white mb-6 flex items-center">
+              <div className="w-1.5 h-5 bg-amber-500 rounded-full mr-3"></div>
+              Sección 2: Ubicación y Metas
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Zona Electoral / Municipio <span className="text-rose-500">*</span></label>
+                <select
+                  required
+                  value={leaderForm.zoneId}
+                  onChange={(e) => handleZoneChange('leader', e.target.value)}
+                  className="w-full bg-[#0a0f18] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all appearance-none"
+                >
+                  <option value="">Seleccione circunscripción</option>
+                  {zones.map(z => (
+                    <option key={z.id} value={z.id}>{z.nombre}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Corregimiento / Vereda / Comuna <span className="text-rose-500">*</span></label>
+                <select
+                  required
+                  disabled={!leaderForm.zoneId || loadingSubdivisions}
+                  value={leaderForm.subdivisionId}
+                  onChange={(e) => setLeaderForm({ ...leaderForm, subdivisionId: e.target.value })}
+                  className="w-full bg-[#0a0f18] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {!leaderForm.zoneId ? (
+                    <option value="">Seleccione primero la circunscripción</option>
+                  ) : loadingSubdivisions ? (
+                    <option value="">Cargando corregimientos y veredas...</option>
+                  ) : subdivisions.length === 0 ? (
+                    <option value="">No hay corregimientos o veredas disponibles</option>
+                  ) : (
+                    <>
+                      <option value="">Seleccione corregimiento o vereda</option>
+                      <optgroup label="Corregimientos">
+                        {subdivisions.filter(s => s.tipo === 'CORREGIMIENTO').map(s => (
+                          <option key={s.id} value={s.id}>{s.nombre}</option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="Veredas">
+                        {subdivisions.filter(s => s.tipo === 'VEREDA').map(s => (
+                          <option key={s.id} value={s.id}>{s.nombre}</option>
+                        ))}
+                      </optgroup>
+                    </>
+                  )}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Puesto de Votación</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <MapIcon className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Ej. Institución Educativa..."
+                    value={leaderForm.puesto}
+                    onChange={(e) => setLeaderForm({ ...leaderForm, puesto: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Meta de Votos Comprometida</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Vote className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="number"
+                    min={1}
+                    value={leaderForm.metaVotos}
+                    onChange={(e) => setLeaderForm({ ...leaderForm, metaVotos: Number(e.target.value) })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sección 3: Credenciales de Acceso */}
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
+            <h3 className="text-base font-bold text-white mb-6 flex items-center">
+              <div className="w-1.5 h-5 bg-purple-500 rounded-full mr-3"></div>
+              Sección 3: Credenciales de Acceso
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Contraseña <span className="text-rose-500">*</span></label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="Ingrese una contraseña"
+                    value={leaderForm.password}
+                    onChange={(e) => setLeaderForm({ ...leaderForm, password: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl px-4 py-3 pr-12 text-sm text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Confirmar Contraseña <span className="text-rose-500">*</span></label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    placeholder="Repita la contraseña"
+                    value={leaderForm.confirmPassword}
+                    onChange={(e) => setLeaderForm({ ...leaderForm, confirmPassword: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl px-4 py-3 pr-12 text-sm text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Footer Info Alert */}
+          <div className="bg-[#0a0f18]/80 border border-indigo-500/10 rounded-2xl p-4 flex items-start gap-4 mt-8">
+            <div className="p-2 bg-indigo-500/20 rounded-full shrink-0">
+              <Info className="w-5 h-5 text-indigo-400" />
+            </div>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              El líder podrá acceder al sistema con su correo electrónico (o cédula si no hay correo) y esta contraseña.<br/>
+              Asegúrese de proporcionarle estas credenciales de forma segura.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isVoterModalOpen) {
+    return (
+      <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+              <div className="p-2 bg-indigo-500/10 rounded-xl">
+                <User className="w-6 h-6 text-indigo-400" />
+              </div>
+              Registrar Nuevo Votante
+            </h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Complete la información básica del votante. Los campos marcados con <span className="text-rose-500">*</span> son obligatorios.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsVoterModalOpen(false)}
+              className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-white/5 text-sm font-medium flex items-center gap-2 transition-all hover:-translate-x-1"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Volver
+            </button>
+            <button
+              onClick={handleSaveVoter}
+              disabled={saving}
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center gap-2 shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Save className="w-4 h-4" />
+              {saving ? 'Guardando...' : 'Guardar Votante'}
+            </button>
+          </div>
+        </div>
+
+        {message && (
+          <div className={`p-4 mb-6 rounded-2xl text-sm flex items-center gap-3 shadow-lg ${
+            message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+          }`}>
+            {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+            {message.text}
+          </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto space-y-6 pb-20 custom-scrollbar pr-2">
+          {/* Sección 1: Información Básica */}
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
+            <h3 className="text-base font-bold text-white mb-6 flex items-center">
+              <div className="w-1.5 h-5 bg-indigo-500 rounded-full mr-3"></div>
+              Sección 1: Información Básica
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Nombre Completo <span className="text-rose-500">*</span></label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. María José Gómez Martínez"
+                    value={voterForm.nombre}
+                    onChange={(e) => setVoterForm({ ...voterForm, nombre: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Cédula de Ciudadanía <span className="text-rose-500">*</span></label>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <CreditCard className="w-4 h-4 text-slate-500" />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ej. 1098765432"
+                      value={voterForm.cedula}
+                      onChange={(e) => setVoterForm({ ...voterForm, cedula: e.target.value })}
+                      className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600 font-mono"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleLookupVoterInfo}
+                    disabled={isQuerying || !voterForm.cedula}
+                    className="px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-white/5 text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                  >
+                    {isQuerying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                    Consultar
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Teléfono <span className="text-rose-500">*</span></label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Phone className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="Ej. 3124567890"
+                    value={voterForm.telefono}
+                    onChange={(e) => setVoterForm({ ...voterForm, telefono: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Correo Electrónico</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Mail className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Ej. correo@ejemplo.com"
+                    value={voterForm.email}
+                    onChange={(e) => setVoterForm({ ...voterForm, email: e.target.value })}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sección 2: Ubicación Básica (with auto-fetched readonly fields) */}
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
+            <h3 className="text-base font-bold text-white mb-6 flex items-center">
+              <div className="w-1.5 h-5 bg-indigo-500 rounded-full mr-3"></div>
+              Sección 2: Ubicación Electoral (Automática)
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Zona Electoral / Municipio</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <MapIcon className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="text"
+                    readOnly
+                    placeholder="Generado automáticamente"
+                    value={zones.find(z => z.id === voterForm.zoneId)?.nombre || ''}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-400 outline-none cursor-not-allowed opacity-70"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Corregimiento / Vereda / Comuna</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <MapIcon className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="text"
+                    readOnly
+                    placeholder="Generado automáticamente"
+                    value={subdivisions.find(s => s.id === voterForm.subdivisionId)?.nombre || ''}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-400 outline-none cursor-not-allowed opacity-70"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Puesto de Votación (Automático)</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <MapIcon className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="text"
+                    readOnly
+                    placeholder="Ej. Institución Educativa..."
+                    value={voterForm.puesto}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-400 outline-none cursor-not-allowed opacity-70"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Mesa Electoral (Automática)</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <MapIcon className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input
+                    type="text"
+                    readOnly
+                    placeholder="Ej. Mesa 12"
+                    value={voterForm.mesa}
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-400 outline-none cursor-not-allowed opacity-70"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sección 3: Información de Registro */}
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
+            <h3 className="text-base font-bold text-white mb-6 flex items-center">
+              <div className="w-1.5 h-5 bg-indigo-500 rounded-full mr-3"></div>
+              Sección 3: Información de Registro
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Estado del Votante <span className="text-rose-500">*</span></label>
+                <select
+                  value={voterForm.intencion}
+                  onChange={(e) => setVoterForm({ ...voterForm, intencion: e.target.value as any })}
+                  className="w-full bg-[#0a0f18] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all appearance-none"
+                >
+                  <option value="Voto Seguro">Voto Seguro</option>
+                  <option value="Probable">Probable</option>
+                  <option value="Indeciso">Indeciso</option>
+                  <option value="En Contra">En Contra</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Líder Asignado (Opcional)</label>
+                <select
+                  value={voterForm.liderId}
+                  onChange={(e) => setVoterForm({ ...voterForm, liderId: e.target.value })}
+                  className="w-full bg-[#0a0f18] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all appearance-none"
+                >
+                  <option value="">Sin líder asignado (Registro Directo)</option>
+                  {leaders.map(l => (
+                    <option key={l.id} value={l.id}>{l.nombre}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">Observaciones</label>
+                <div className="relative">
+                  <div className="absolute top-3 left-4 pointer-events-none">
+                    <PenTool className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <textarea
+                    rows={3}
+                    placeholder="Información adicional (opcional)"
+                    className="w-full bg-[#0a0f18] border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600 resize-none"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Info Alert */}
+          <div className="bg-[#0a0f18]/80 border border-indigo-500/10 rounded-2xl p-4 flex items-start gap-4 mt-8">
+            <div className="p-2 bg-indigo-500/20 rounded-full shrink-0">
+              <Info className="w-5 h-5 text-indigo-400" />
+            </div>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              La información del votante será utilizada para procesos electorales y de participación ciudadana.<br/>
+              Verifique cuidadosamente los datos antes de guardar.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Top Header */}
@@ -535,460 +1093,6 @@ export default function AdminLeadersVotersPage() {
         </div>
       )}
 
-      {/* Create Leader Modal */}
-      {isLeaderModalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
-          <div className="relative w-full max-w-7xl w-[95vw] h-[95vh] flex flex-col bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-[32px] shadow-2xl overflow-hidden">
-            {/* Glowing background highlights behind card */}
-            <div className="absolute w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none -translate-y-24 -translate-x-24" />
-            <div className="absolute w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px] pointer-events-none bottom-0 right-0 translate-x-32 translate-y-32" />
-            {/* Subtle Grid Pattern Overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:28px_28px] opacity-15 pointer-events-none" />
-
-            {/* Header */}
-            <div className="relative z-10 flex items-center justify-between px-8 py-6 border-b border-white/10 bg-slate-900/50">
-              <div className="flex items-center gap-4">
-                <div className="inline-flex p-3 bg-gradient-to-tr from-indigo-500 to-purple-500 text-white rounded-2xl shadow-[0_0_30px_rgba(99,102,241,0.3)]">
-                  <UserCheck className="w-6 h-6" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  Registrar Nuevo Líder
-                </h3>
-              </div>
-              <button onClick={() => setIsLeaderModalOpen(false)} className="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-xl">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="relative z-10 flex-1 overflow-y-auto p-8">
-              {message && (
-                <div className={`p-4 mb-6 rounded-2xl text-sm flex items-center gap-3 shadow-lg ${
-                  message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                }`}>
-                  {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                  {message.text}
-                </div>
-              )}
-
-              <form id="leader-form" onSubmit={handleSaveLeader} className="space-y-8">
-                
-                {/* Sección 1: Información Personal */}
-                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8">
-                  <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                    <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
-                    Sección 1: Información Personal
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Nombre Completo *</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ej. Carlos Mendoza"
-                        value={leaderForm.nombre}
-                        onChange={(e) => setLeaderForm({ ...leaderForm, nombre: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Cédula de Ciudadanía *</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ej. 1098234567"
-                        value={leaderForm.cedula}
-                        onChange={(e) => setLeaderForm({ ...leaderForm, cedula: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all font-mono"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Teléfono</label>
-                      <input
-                        type="tel"
-                        placeholder="Ej. 3124567890"
-                        value={leaderForm.telefono}
-                        onChange={(e) => setLeaderForm({ ...leaderForm, telefono: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Correo Electrónico</label>
-                      <input
-                        type="email"
-                        placeholder="correo@ejemplo.com"
-                        value={leaderForm.email}
-                        onChange={(e) => setLeaderForm({ ...leaderForm, email: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sección 2: Ubicación */}
-                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8">
-                  <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                    <span className="w-2 h-6 bg-amber-500 rounded-full"></span>
-                    Sección 2: Ubicación y Metas
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Circunscripción / Municipio *</label>
-                      <select
-                        required
-                        value={leaderForm.zoneId}
-                        onChange={(e) => handleZoneChange('leader', e.target.value)}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                      >
-                        <option value="">Seleccione circunscripción</option>
-                        {zones.map(z => (
-                          <option key={z.id} value={z.id}>{z.nombre}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Corregimiento / Vereda *</label>
-                      <select
-                        required
-                        disabled={!leaderForm.zoneId || loadingSubdivisions}
-                        value={leaderForm.subdivisionId}
-                        onChange={(e) => setLeaderForm({ ...leaderForm, subdivisionId: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {!leaderForm.zoneId ? (
-                          <option value="">Seleccione primero la circunscripción</option>
-                        ) : loadingSubdivisions ? (
-                          <option value="">Cargando corregimientos y veredas...</option>
-                        ) : subdivisions.length === 0 ? (
-                          <option value="">No hay corregimientos o veredas disponibles</option>
-                        ) : (
-                          <>
-                            <option value="">Seleccione corregimiento o vereda</option>
-                            <optgroup label="Corregimientos">
-                              {subdivisions.filter(s => s.tipo === 'CORREGIMIENTO').map(s => (
-                                <option key={s.id} value={s.id}>{s.nombre}</option>
-                              ))}
-                            </optgroup>
-                            <optgroup label="Veredas">
-                              {subdivisions.filter(s => s.tipo === 'VEREDA').map(s => (
-                                <option key={s.id} value={s.id}>{s.nombre}</option>
-                              ))}
-                            </optgroup>
-                          </>
-                        )}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Puesto de Votación</label>
-                      <input
-                        type="text"
-                        placeholder="Ej. Colegio Santander"
-                        value={leaderForm.puesto}
-                        onChange={(e) => setLeaderForm({ ...leaderForm, puesto: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Meta de Votos Comprometida</label>
-                      <input
-                        type="number"
-                        min={1}
-                        value={leaderForm.metaVotos}
-                        onChange={(e) => setLeaderForm({ ...leaderForm, metaVotos: Number(e.target.value) })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sección 3: Credenciales de Acceso */}
-                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8">
-                  <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                    <span className="w-2 h-6 bg-purple-500 rounded-full"></span>
-                    Sección 3: Credenciales de Acceso
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="relative">
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Contraseña *</label>
-                      <div className="relative">
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          required
-                          placeholder="Ingrese una contraseña"
-                          value={leaderForm.password}
-                          onChange={(e) => setLeaderForm({ ...leaderForm, password: e.target.value })}
-                          className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 pr-12 text-sm text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
-                        >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="relative">
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Confirmar Contraseña *</label>
-                      <div className="relative">
-                        <input
-                          type={showConfirmPassword ? "text" : "password"}
-                          required
-                          placeholder="Repita la contraseña"
-                          value={leaderForm.confirmPassword}
-                          onChange={(e) => setLeaderForm({ ...leaderForm, confirmPassword: e.target.value })}
-                          className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 pr-12 text-sm text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
-                        >
-                          {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </form>
-            </div>
-
-            {/* Footer with Actions */}
-            <div className="relative z-10 flex items-center justify-end gap-4 px-8 py-5 border-t border-white/10 bg-slate-900/50">
-              <button
-                type="button"
-                onClick={() => setIsLeaderModalOpen(false)}
-                className="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                form="leader-form"
-                disabled={saving}
-                className="px-8 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white font-bold flex items-center gap-2 shadow-[0_10px_20px_-10px_rgba(99,102,241,0.5)] hover:shadow-[0_10px_20px_-10px_rgba(99,102,241,0.8)] transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              >
-                <Save className="w-5 h-5" />
-                {saving ? 'Guardando...' : 'Guardar Líder'}
-              </button>
-            </div>
-            
-          </div>
-        </div>
-      )}
-
-      {/* Create Voter Modal */}
-      {isVoterModalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
-          <div className="relative w-full max-w-7xl w-[95vw] h-[95vh] flex flex-col bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-[32px] shadow-2xl overflow-hidden">
-            {/* Glowing background highlights behind card */}
-            <div className="absolute w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none -translate-y-24 -translate-x-24" />
-            <div className="absolute w-[400px] h-[400px] bg-teal-500/5 rounded-full blur-[100px] pointer-events-none bottom-0 right-0 translate-x-32 translate-y-32" />
-            {/* Subtle Grid Pattern Overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:28px_28px] opacity-15 pointer-events-none" />
-
-            {/* Header */}
-            <div className="relative z-10 flex items-center justify-between px-8 py-6 border-b border-white/10 bg-slate-900/50">
-              <div className="flex items-center gap-4">
-                <div className="inline-flex p-3 bg-gradient-to-tr from-emerald-500 to-teal-500 text-white rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-                  <Vote className="w-6 h-6" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  Registrar Nuevo Votante
-                </h3>
-              </div>
-              <button onClick={() => setIsVoterModalOpen(false)} className="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-xl">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="relative z-10 flex-1 overflow-y-auto p-8">
-              {message && (
-                <div className={`p-4 mb-6 rounded-2xl text-sm flex items-center gap-3 shadow-lg ${
-                  message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                }`}>
-                  {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                  {message.text}
-                </div>
-              )}
-
-              <form id="voter-form" onSubmit={handleSaveVoter} className="space-y-8">
-                
-                {/* Sección 1: Información Básica */}
-                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8">
-                  <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                    <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
-                    Información Básica
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Nombre Completo *</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ej. Ana Lucía Gómez"
-                        value={voterForm.nombre}
-                        onChange={(e) => setVoterForm({ ...voterForm, nombre: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Cédula de Ciudadanía *</label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ej. 1098456123"
-                          value={voterForm.cedula}
-                          onChange={(e) => setVoterForm({ ...voterForm, cedula: e.target.value })}
-                          className="flex-1 bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono transition-all"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleLookupVoterInfo}
-                          disabled={isQuerying || !voterForm.cedula}
-                          className="px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md disabled:opacity-50 transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
-                        >
-                          {isQuerying ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Consultar'}
-                        </button>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Teléfono *</label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="Ej. 3109876543"
-                        value={voterForm.telefono}
-                        onChange={(e) => setVoterForm({ ...voterForm, telefono: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Correo Electrónico</label>
-                      <input
-                        type="email"
-                        placeholder="correo@ejemplo.com"
-                        value={voterForm.email}
-                        onChange={(e) => setVoterForm({ ...voterForm, email: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Líder Asignado</label>
-                      <select
-                        value={voterForm.liderId}
-                        onChange={(e) => setVoterForm({ ...voterForm, liderId: e.target.value })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                      >
-                        <option value="">Sin líder asignado (Registro Directo)</option>
-                        {leaders.map(l => (
-                          <option key={l.id} value={l.id}>{l.nombre} ({l.comuna || 'General'})</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-2">Intención de Voto</label>
-                      <select
-                        value={voterForm.intencion}
-                        onChange={(e) => setVoterForm({ ...voterForm, intencion: e.target.value as any })}
-                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                      >
-                        <option value="Voto Seguro">Voto Seguro</option>
-                        <option value="Probable">Probable</option>
-                        <option value="Indeciso">Indeciso</option>
-                        <option value="En Contra">En Contra</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sección 2: Información Electoral */}
-                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8 relative">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                    <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                      <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
-                      Información Electoral
-                    </h4>
-                    <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-full">
-                      <CheckCircle2 className="w-4 h-4" />
-                      Información obtenida mediante consulta electoral
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-400 mb-2">Zona Electoral / Municipio</label>
-                      <input
-                        type="text"
-                        readOnly
-                        placeholder="No consultado"
-                        value={zones.find(z => z.id === voterForm.zoneId)?.nombre || ''}
-                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-slate-300 outline-none cursor-not-allowed opacity-80"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-400 mb-2">Corregimiento / Vereda</label>
-                      <input
-                        type="text"
-                        readOnly
-                        placeholder="No consultado"
-                        value={subdivisions.find(s => s.id === voterForm.subdivisionId)?.nombre || ''}
-                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-slate-300 outline-none cursor-not-allowed opacity-80"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-400 mb-2">Puesto de Votación</label>
-                      <input
-                        type="text"
-                        readOnly
-                        placeholder="No consultado"
-                        value={voterForm.puesto}
-                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-slate-300 outline-none cursor-not-allowed opacity-80"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-400 mb-2">Mesa Electoral</label>
-                      <input
-                        type="text"
-                        readOnly
-                        placeholder="No consultado"
-                        value={voterForm.mesa}
-                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-slate-300 outline-none cursor-not-allowed opacity-80 font-mono"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-              </form>
-            </div>
-
-            {/* Footer with Actions */}
-            <div className="relative z-10 flex items-center justify-end gap-4 px-8 py-5 border-t border-white/10 bg-slate-900/50">
-              <button
-                type="button"
-                onClick={() => setIsVoterModalOpen(false)}
-                className="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                form="voter-form"
-                disabled={saving}
-                className="px-8 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold flex items-center gap-2 shadow-[0_10px_20px_-10px_rgba(16,185,129,0.5)] hover:shadow-[0_10px_20px_-10px_rgba(16,185,129,0.8)] transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              >
-                <Save className="w-5 h-5" />
-                {saving ? 'Guardando...' : 'Guardar Votante'}
-              </button>
-            </div>
-            
-          </div>
-        </div>
-      )}
     </div>
   );
 }
