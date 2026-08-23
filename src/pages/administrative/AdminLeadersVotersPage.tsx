@@ -537,220 +537,272 @@ export default function AdminLeadersVotersPage() {
 
       {/* Create Leader Modal */}
       {isLeaderModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
-            <div className="bg-slate-900 border border-white/10 rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <UserCheck className="w-4 h-4 text-indigo-400" />
-                Registrar Nuevo Líder
-              </h3>
-              <button onClick={() => setIsLeaderModalOpen(false)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+          <div className="relative w-full max-w-7xl w-[95vw] h-[95vh] flex flex-col bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-[32px] shadow-2xl overflow-hidden">
+            {/* Glowing background highlights behind card */}
+            <div className="absolute w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none -translate-y-24 -translate-x-24" />
+            <div className="absolute w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px] pointer-events-none bottom-0 right-0 translate-x-32 translate-y-32" />
+            {/* Subtle Grid Pattern Overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:28px_28px] opacity-15 pointer-events-none" />
+
+            {/* Header */}
+            <div className="relative z-10 flex items-center justify-between px-8 py-6 border-b border-white/10 bg-slate-900/50">
+              <div className="flex items-center gap-4">
+                <div className="inline-flex p-3 bg-gradient-to-tr from-indigo-500 to-purple-500 text-white rounded-2xl shadow-[0_0_30px_rgba(99,102,241,0.3)]">
+                  <UserCheck className="w-6 h-6" />
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  Registrar Nuevo Líder
+                </h3>
+              </div>
+              <button onClick={() => setIsLeaderModalOpen(false)} className="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-xl">
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            {message && (
-              <div className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
-                message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-              }`}>
-                {message.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                {message.text}
-              </div>
-            )}
+            {/* Body */}
+            <div className="relative z-10 flex-1 overflow-y-auto p-8">
+              {message && (
+                <div className={`p-4 mb-6 rounded-2xl text-sm flex items-center gap-3 shadow-lg ${
+                  message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                }`}>
+                  {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                  {message.text}
+                </div>
+              )}
 
-            <form onSubmit={handleSaveLeader} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Nombre Completo *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej. Carlos Mendoza"
-                    value={leaderForm.nombre}
-                    onChange={(e) => setLeaderForm({ ...leaderForm, nombre: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Cédula de Ciudadanía *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej. 1098234567"
-                    value={leaderForm.cedula}
-                    onChange={(e) => setLeaderForm({ ...leaderForm, cedula: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Teléfono</label>
-                  <input
-                    type="tel"
-                    placeholder="Ej. 3124567890"
-                    value={leaderForm.telefono}
-                    onChange={(e) => setLeaderForm({ ...leaderForm, telefono: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Correo Electrónico</label>
-                  <input
-                    type="email"
-                    placeholder="correo@ejemplo.com"
-                    value={leaderForm.email}
-                    onChange={(e) => setLeaderForm({ ...leaderForm, email: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Circunscripción / Municipio *</label>
-                  <select
-                    required
-                    value={leaderForm.zoneId}
-                    onChange={(e) => handleZoneChange('leader', e.target.value)}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  >
-                    <option value="">Seleccione circunscripción</option>
-                    {zones.map(z => (
-                      <option key={z.id} value={z.id}>{z.nombre}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Corregimiento / Vereda *</label>
-                  <select
-                    required
-                    disabled={!leaderForm.zoneId || loadingSubdivisions}
-                    value={leaderForm.subdivisionId}
-                    onChange={(e) => setLeaderForm({ ...leaderForm, subdivisionId: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {!leaderForm.zoneId ? (
-                      <option value="">Seleccione primero la circunscripción</option>
-                    ) : loadingSubdivisions ? (
-                      <option value="">Cargando corregimientos y veredas...</option>
-                    ) : subdivisions.length === 0 ? (
-                      <option value="">No hay corregimientos o veredas disponibles</option>
-                    ) : (
-                      <>
-                        <option value="">Seleccione corregimiento o vereda</option>
-                        {/* Grouping by type if available */}
-                        <optgroup label="Corregimientos">
-                          {subdivisions.filter(s => s.tipo === 'CORREGIMIENTO').map(s => (
-                            <option key={s.id} value={s.id}>{s.nombre}</option>
-                          ))}
-                        </optgroup>
-                        <optgroup label="Veredas">
-                          {subdivisions.filter(s => s.tipo === 'VEREDA').map(s => (
-                            <option key={s.id} value={s.id}>{s.nombre}</option>
-                          ))}
-                        </optgroup>
-                      </>
-                    )}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Puesto de Votación</label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Colegio Santander"
-                    value={leaderForm.puesto}
-                    onChange={(e) => setLeaderForm({ ...leaderForm, puesto: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Meta de Votos Comprometida</label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={leaderForm.metaVotos}
-                    onChange={(e) => setLeaderForm({ ...leaderForm, metaVotos: Number(e.target.value) })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-
-                {/* Password Fields */}
-                <div className="relative">
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Contraseña *</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      placeholder="Ingrese una contraseña"
-                      value={leaderForm.password}
-                      onChange={(e) => setLeaderForm({ ...leaderForm, password: e.target.value })}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 pr-10 text-xs text-white focus:border-indigo-500 outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+              <form id="leader-form" onSubmit={handleSaveLeader} className="space-y-8">
+                
+                {/* Sección 1: Información Personal */}
+                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8">
+                  <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                    Sección 1: Información Personal
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Nombre Completo *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ej. Carlos Mendoza"
+                        value={leaderForm.nombre}
+                        onChange={(e) => setLeaderForm({ ...leaderForm, nombre: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Cédula de Ciudadanía *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ej. 1098234567"
+                        value={leaderForm.cedula}
+                        onChange={(e) => setLeaderForm({ ...leaderForm, cedula: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Teléfono</label>
+                      <input
+                        type="tel"
+                        placeholder="Ej. 3124567890"
+                        value={leaderForm.telefono}
+                        onChange={(e) => setLeaderForm({ ...leaderForm, telefono: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Correo Electrónico</label>
+                      <input
+                        type="email"
+                        placeholder="correo@ejemplo.com"
+                        value={leaderForm.email}
+                        onChange={(e) => setLeaderForm({ ...leaderForm, email: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="relative">
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Confirmar Contraseña *</label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      required
-                      placeholder="Repita la contraseña"
-                      value={leaderForm.confirmPassword}
-                      onChange={(e) => setLeaderForm({ ...leaderForm, confirmPassword: e.target.value })}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 pr-10 text-xs text-white focus:border-indigo-500 outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-                    >
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                {/* Sección 2: Ubicación */}
+                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8">
+                  <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-amber-500 rounded-full"></span>
+                    Sección 2: Ubicación y Metas
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Circunscripción / Municipio *</label>
+                      <select
+                        required
+                        value={leaderForm.zoneId}
+                        onChange={(e) => handleZoneChange('leader', e.target.value)}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                      >
+                        <option value="">Seleccione circunscripción</option>
+                        {zones.map(z => (
+                          <option key={z.id} value={z.id}>{z.nombre}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Corregimiento / Vereda *</label>
+                      <select
+                        required
+                        disabled={!leaderForm.zoneId || loadingSubdivisions}
+                        value={leaderForm.subdivisionId}
+                        onChange={(e) => setLeaderForm({ ...leaderForm, subdivisionId: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {!leaderForm.zoneId ? (
+                          <option value="">Seleccione primero la circunscripción</option>
+                        ) : loadingSubdivisions ? (
+                          <option value="">Cargando corregimientos y veredas...</option>
+                        ) : subdivisions.length === 0 ? (
+                          <option value="">No hay corregimientos o veredas disponibles</option>
+                        ) : (
+                          <>
+                            <option value="">Seleccione corregimiento o vereda</option>
+                            <optgroup label="Corregimientos">
+                              {subdivisions.filter(s => s.tipo === 'CORREGIMIENTO').map(s => (
+                                <option key={s.id} value={s.id}>{s.nombre}</option>
+                              ))}
+                            </optgroup>
+                            <optgroup label="Veredas">
+                              {subdivisions.filter(s => s.tipo === 'VEREDA').map(s => (
+                                <option key={s.id} value={s.id}>{s.nombre}</option>
+                              ))}
+                            </optgroup>
+                          </>
+                        )}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Puesto de Votación</label>
+                      <input
+                        type="text"
+                        placeholder="Ej. Colegio Santander"
+                        value={leaderForm.puesto}
+                        onChange={(e) => setLeaderForm({ ...leaderForm, puesto: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Meta de Votos Comprometida</label>
+                      <input
+                        type="number"
+                        min={1}
+                        value={leaderForm.metaVotos}
+                        onChange={(e) => setLeaderForm({ ...leaderForm, metaVotos: Number(e.target.value) })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setIsLeaderModalOpen(false)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-600/30"
-                >
-                  <Save className="w-3.5 h-3.5" />
-                  {saving ? 'Guardando...' : 'Guardar Líder'}
-                </button>
-              </div>
-            </form>
+                {/* Sección 3: Credenciales de Acceso */}
+                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8">
+                  <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-purple-500 rounded-full"></span>
+                    Sección 3: Credenciales de Acceso
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="relative">
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Contraseña *</label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          required
+                          placeholder="Ingrese una contraseña"
+                          value={leaderForm.password}
+                          onChange={(e) => setLeaderForm({ ...leaderForm, password: e.target.value })}
+                          className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 pr-12 text-sm text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="relative">
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Confirmar Contraseña *</label>
+                      <div className="relative">
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          required
+                          placeholder="Repita la contraseña"
+                          value={leaderForm.confirmPassword}
+                          onChange={(e) => setLeaderForm({ ...leaderForm, confirmPassword: e.target.value })}
+                          className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 pr-12 text-sm text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+
+            {/* Footer with Actions */}
+            <div className="relative z-10 flex items-center justify-end gap-4 px-8 py-5 border-t border-white/10 bg-slate-900/50">
+              <button
+                type="button"
+                onClick={() => setIsLeaderModalOpen(false)}
+                className="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                form="leader-form"
+                disabled={saving}
+                className="px-8 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white font-bold flex items-center gap-2 shadow-[0_10px_20px_-10px_rgba(99,102,241,0.5)] hover:shadow-[0_10px_20px_-10px_rgba(99,102,241,0.8)] transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <Save className="w-5 h-5" />
+                {saving ? 'Guardando...' : 'Guardar Líder'}
+              </button>
+            </div>
+            
           </div>
-        </div>
         </div>
       )}
 
       {/* Create Voter Modal */}
       {isVoterModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-[95%] lg:max-w-7xl h-[95%] md:h-[90%] max-h-full shadow-2xl flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between border-b border-white/10 p-4 sm:p-5 md:p-6 shrink-0 bg-slate-900">
-              <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-3">
-                <Vote className="w-5 h-5 md:w-6 md:h-6 text-indigo-400" />
-                Registrar Nuevo Votante
-              </h3>
-              <button onClick={() => setIsVoterModalOpen(false)} className="text-slate-400 hover:text-white transition-colors p-1">
-                <X className="w-6 h-6 md:w-7 md:h-7" />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          <div className="relative w-full max-w-5xl flex-shrink-0 my-auto">
+            {/* Glowing background highlights behind card */}
+            <div className="absolute w-[350px] h-[350px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -translate-y-12" />
+            <div className="absolute w-[250px] h-[250px] bg-teal-500/5 rounded-full blur-3xl pointer-events-none translate-x-32 translate-y-32" />
+
+            <div className="bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-[32px] p-6 sm:p-8 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_50px_rgba(16,185,129,0.05)] relative overflow-hidden flex flex-col max-h-[90vh]">
+              {/* Subtle Grid Pattern Overlay */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:28px_28px] opacity-15 pointer-events-none" />
+              
+              <button onClick={() => setIsVoterModalOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors z-20">
+                <X className="w-6 h-6" />
               </button>
-            </div>
+
+              <div className="text-center space-y-2 relative z-10 shrink-0">
+                <div className="inline-flex p-3.5 bg-gradient-to-tr from-emerald-500 to-teal-400 text-white rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.2)] mb-2">
+                  <Vote className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Registrar Nuevo Votante
+                </h3>
+              </div>
 
             {message && (
               <div className={`mx-6 mt-6 p-4 rounded-xl text-sm flex items-center gap-3 shrink-0 ${
@@ -902,20 +954,13 @@ export default function AdminLeadersVotersPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 p-5 sm:p-6 border-t border-white/10 shrink-0 bg-slate-900">
-                <button
-                  type="button"
-                  onClick={() => setIsVoterModalOpen(false)}
-                  className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
-                >
-                  Cancelar
-                </button>
+              <div className="pt-4 shrink-0 relative z-10">
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all"
+                  className="w-full justify-center py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold flex items-center gap-2 shadow-lg hover:shadow-emerald-500/25 transition-all"
                 >
-                  <Save className="w-4 h-4" />
+                  <Save className="w-5 h-5" />
                   {saving ? 'Guardando...' : 'Guardar Votante'}
                 </button>
               </div>

@@ -50,9 +50,9 @@ export default function AdminBudgetCNEPage() {
   const [jurisdiction, setJurisdiction] = useState('');
   const [topeCNE, setTopeCNE] = useState(0);
   const [setupForm, setSetupForm] = useState({
-    name: '',
-    jurisdiction: '',
-    tope: ''
+    name: 'Campaña Alcaldía de Medellín',
+    jurisdiction: 'Medellín, Antioquia',
+    tope: '2500000000'
   });
 
   // Active role for simulation

@@ -91,17 +91,17 @@ export default function AdminCampaignPage() {
 
   // Campaign Form State
   const [form, setForm] = useState({
-    nombre: '',
-    candidatoNombre: '',
-    cargoPostulacion: '' as 'Gobernación' | 'Asamblea' | 'Alcaldía' | 'Concejo' | '',
-    departamento: '',
-    municipio: '',
+    nombre: 'Campaña Alcaldía de Medellín 2027',
+    candidatoNombre: 'Federico Gutiérrez',
+    cargoPostulacion: 'Alcaldía' as 'Gobernación' | 'Asamblea' | 'Alcaldía' | 'Concejo' | '',
+    departamento: 'Antioquia',
+    municipio: 'Medellín',
     fechaInicio: new Date().toISOString().split('T')[0],
-    fechaEleccion: '2026-10-25',
-    metaVotos: 0,
-    presupuestoTotal: 0,
+    fechaEleccion: '2027-10-25',
+    metaVotos: 350000,
+    presupuestoTotal: 2500000000,
     estado: 'ACTIVA' as 'PLANIFICACION' | 'ACTIVA' | 'PAUSADA' | 'FINALIZADA',
-    descripcion: ''
+    descripcion: 'Campaña para la Alcaldía de Medellín enfocada en seguridad y movilidad.'
   });
 
   // Candidate Profile State
@@ -123,17 +123,17 @@ export default function AdminCampaignPage() {
   } | null>(null);
 
   const [candidateForm, setCandidateForm] = useState({
-    nombre: '',
-    nombre_politico: '',
+    nombre: 'Federico Andrés Gutiérrez Zuluaga',
+    nombre_politico: 'Fico',
     cargo: 'Alcaldía Municipal/Distrital',
-    partido: '',
-    departamento: '',
-    municipio: '',
-    identificacion: '',
-    eslogan: '',
-    resumen_profesional: '',
-    resena: '',
-    foto_url: '',
+    partido: 'Partido Creemos',
+    departamento: 'Antioquia',
+    municipio: 'Medellín',
+    identificacion: '71625345',
+    eslogan: '¡Medellín, Creemos!',
+    resumen_profesional: 'Ingeniero Civil de la Universidad de Medellín con especialización en Alta Gerencia y Ciencias Políticas.',
+    resena: 'Ex Alcalde de Medellín, líder político antioqueño con amplia experiencia en administración pública, seguridad y desarrollo urbano. Dedicado a recuperar la confianza de la ciudadanía y promover el desarrollo integral de la ciudad.',
+    foto_url: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/FicoGutierrez.jpg',
     sello_inhabilidades: '100% Verificado'
   });
 
@@ -851,29 +851,43 @@ export default function AdminCampaignPage() {
 
       {/* New Campaign Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Flag className="w-4 h-4 text-indigo-400" />
-                Crear Nueva Campaña Electoral
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div className="relative w-full max-w-5xl flex-shrink-0 my-auto">
+            {/* Glowing background highlights behind card */}
+            <div className="absolute w-[350px] h-[350px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -translate-y-12" />
+            <div className="absolute w-[250px] h-[250px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none translate-x-32 translate-y-32" />
+
+            <div className="bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-[32px] p-6 sm:p-8 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_50px_rgba(6,182,212,0.05)] relative overflow-hidden flex flex-col max-h-[90vh]">
+              {/* Subtle Grid Pattern Overlay */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:28px_28px] opacity-15 pointer-events-none" />
+              
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors z-20"
+              >
+                <X className="w-6 h-6" />
               </button>
-            </div>
+
+              <div className="text-center space-y-2 relative z-10 shrink-0">
+                <div className="inline-flex p-3.5 bg-gradient-to-tr from-cyan-500 to-blue-500 text-white rounded-2xl shadow-[0_0_30px_rgba(6,182,212,0.2)] mb-2">
+                  <Flag className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Crear Nueva Campaña Electoral
+                </h3>
+              </div>
 
             {message && (
-              <div className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
+              <div className={`relative z-10 p-3 rounded-xl text-xs flex items-center gap-2 shrink-0 ${
                 message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
               }`}>
-                {message.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                {message.text}
+                {message.type === 'success' ? <CheckCircle2 className="w-4 h-4 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 flex-shrink-0" />}
+                <span>{message.text}</span>
               </div>
             )}
 
-            <form onSubmit={handleSaveCampaign} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <form onSubmit={handleSaveCampaign} className="flex flex-col flex-1 overflow-hidden relative z-10">
+              <div className="flex-1 overflow-y-auto space-y-6 pr-2">
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Nombre de la Campaña *</label>
                   <input
@@ -1051,20 +1065,13 @@ export default function AdminCampaignPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
-                >
-                  Cancelar
-                </button>
+              <div className="pt-4 shrink-0 relative z-10">
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-600/30"
+                  className="w-full justify-center py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-bold flex items-center gap-2 shadow-lg hover:shadow-cyan-500/25 transition-all"
                 >
-                  <Save className="w-3.5 h-3.5" />
+                  <Save className="w-5 h-5" />
                   {saving ? 'Creando...' : 'Crear Campaña'}
                 </button>
               </div>

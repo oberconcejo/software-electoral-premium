@@ -402,142 +402,155 @@ export default function AdminSettingsPage() {
 
       {/* Create Subuser Modal */}
       {isCreateUserModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <UserPlus className="w-4 h-4 text-indigo-400" />
-                Crear Nuevo Subusuario
-              </h3>
-              <button onClick={() => setIsCreateUserModalOpen(false)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {message && (
-              <div className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
-                message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-              }`}>
-                {message.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                {message.text}
-              </div>
-            )}
-
-            <form onSubmit={handleCreateSubuser} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Nombre Completo *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej. Andrés Morales"
-                    value={userForm.displayName}
-                    onChange={(e) => setUserForm({ ...userForm, displayName: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-[32px] max-w-5xl w-full max-h-[95vh] flex flex-col shadow-2xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-cyan-500/20 blur-[100px] rounded-full pointer-events-none"></div>
+            
+            <div className="relative z-10 flex flex-col h-full">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/10 p-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-cyan-500/20 flex items-center justify-center border border-cyan-500/30">
+                    <UserPlus className="w-5 h-5 text-cyan-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Crear Nuevo Subusuario</h3>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Correo Electrónico *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="usuario@campana.com"
-                    value={userForm.email}
-                    onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Teléfono</label>
-                  <input
-                    type="tel"
-                    placeholder="Ej. 3123456789"
-                    value={userForm.phone}
-                    onChange={(e) => setUserForm({ ...userForm, phone: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Rol en el Sistema</label>
-                  <select
-                    value={userForm.role}
-                    onChange={(e) => setUserForm({ ...userForm, role: e.target.value as any })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  >
-                    <option value={UserRole.USUARIO}>Digitador / Operador</option>
-                    <option value={UserRole.COORDINADOR}>Coordinador Territorial</option>
-                    <option value={UserRole.DIRECTOR}>Director de Campaña</option>
-                    <option value={UserRole.ADMIN_CLIENTE}>Administrador de Cliente</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Contraseña Inicial</label>
-                  <input
-                    type="password"
-                    placeholder="Mínimo 6 caracteres"
-                    value={userForm.password}
-                    onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Confirmar Contraseña</label>
-                  <input
-                    type="password"
-                    placeholder="Repita la contraseña"
-                    value={userForm.confirmPassword}
-                    onChange={(e) => setUserForm({ ...userForm, confirmPassword: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
-                  />
-                </div>
+                <button onClick={() => setIsCreateUserModalOpen(false)} className="text-slate-400 hover:text-white p-2 hover:bg-white/5 rounded-xl transition-colors">
+                  <X className="w-6 h-6" />
+                </button>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Módulos Autorizados</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { code: 'ADMINISTRATIVE', label: 'Gestión Administrativa' },
-                    { code: 'TERRITORY', label: 'Gestión Territorial' },
-                    { code: 'STRATEGY', label: 'Gestión Estratégica' },
-                    { code: 'CRM', label: 'CRM Electoral' }
-                  ].map((mod) => (
-                    <label key={mod.code} className="flex items-center gap-2 p-2 rounded-lg bg-slate-950 border border-white/5 cursor-pointer">
+              {/* Body */}
+              <div className="p-6 overflow-y-auto space-y-6">
+                {message && (
+                  <div className={`p-4 rounded-2xl text-sm flex items-center gap-3 ${
+                    message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                  }`}>
+                    {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                    {message.text}
+                  </div>
+                )}
+
+                <form id="subuser-form" onSubmit={handleCreateSubuser} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Nombre Completo *</label>
                       <input
-                        type="checkbox"
-                        checked={userForm.assignedModules.includes(mod.code)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setUserForm({ ...userForm, assignedModules: [...userForm.assignedModules, mod.code] });
-                          } else {
-                            setUserForm({ ...userForm, assignedModules: userForm.assignedModules.filter(m => m !== mod.code) });
-                          }
-                        }}
-                        className="rounded border-white/20 text-indigo-600 focus:ring-indigo-500 bg-slate-900"
+                        type="text"
+                        required
+                        placeholder="Ej. Andrés Morales"
+                        value={userForm.displayName}
+                        onChange={(e) => setUserForm({ ...userForm, displayName: e.target.value })}
+                        className="w-full bg-slate-950/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
                       />
-                      <span className="text-xs text-slate-300">{mod.label}</span>
-                    </label>
-                  ))}
-                </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Correo Electrónico *</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="usuario@campana.com"
+                        value={userForm.email}
+                        onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
+                        className="w-full bg-slate-950/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Teléfono</label>
+                      <input
+                        type="tel"
+                        placeholder="Ej. 3123456789"
+                        value={userForm.phone}
+                        onChange={(e) => setUserForm({ ...userForm, phone: e.target.value })}
+                        className="w-full bg-slate-950/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Rol en el Sistema</label>
+                      <select
+                        value={userForm.role}
+                        onChange={(e) => setUserForm({ ...userForm, role: e.target.value as any })}
+                        className="w-full bg-slate-950/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
+                      >
+                        <option value={UserRole.USUARIO}>Digitador / Operador</option>
+                        <option value={UserRole.COORDINADOR}>Coordinador Territorial</option>
+                        <option value={UserRole.DIRECTOR}>Director de Campaña</option>
+                        <option value={UserRole.ADMIN_CLIENTE}>Administrador de Cliente</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Contraseña Inicial</label>
+                      <input
+                        type="password"
+                        placeholder="Mínimo 6 caracteres"
+                        value={userForm.password}
+                        onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
+                        className="w-full bg-slate-950/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Confirmar Contraseña</label>
+                      <input
+                        type="password"
+                        placeholder="Repita la contraseña"
+                        value={userForm.confirmPassword}
+                        onChange={(e) => setUserForm({ ...userForm, confirmPassword: e.target.value })}
+                        className="w-full bg-slate-950/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-3">Módulos Autorizados</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        { code: 'ADMINISTRATIVE', label: 'Gestión Administrativa' },
+                        { code: 'TERRITORY', label: 'Gestión Territorial' },
+                        { code: 'STRATEGY', label: 'Gestión Estratégica' },
+                        { code: 'CRM', label: 'CRM Electoral' }
+                      ].map((mod) => (
+                        <label key={mod.code} className="flex items-center gap-3 p-4 rounded-2xl bg-slate-950/50 border border-white/5 cursor-pointer hover:border-cyan-500/50 transition-colors group">
+                          <input
+                            type="checkbox"
+                            checked={userForm.assignedModules.includes(mod.code)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setUserForm({ ...userForm, assignedModules: [...userForm.assignedModules, mod.code] });
+                              } else {
+                                setUserForm({ ...userForm, assignedModules: userForm.assignedModules.filter(m => m !== mod.code) });
+                              }
+                            }}
+                            className="rounded border-white/20 text-cyan-600 focus:ring-cyan-500 bg-slate-900 w-5 h-5 cursor-pointer"
+                          />
+                          <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">{mod.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </form>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
+              {/* Footer */}
+              <div className="p-6 border-t border-white/10 flex items-center justify-end gap-3 mt-auto bg-slate-900/50">
                 <button
                   type="button"
                   onClick={() => setIsCreateUserModalOpen(false)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
+                  className="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
+                  form="subuser-form"
                   disabled={saving}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-600/30"
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-bold flex items-center gap-2 shadow-lg shadow-cyan-500/25 transition-all"
                 >
-                  <Save className="w-3.5 h-3.5" />
+                  <Save className="w-4 h-4" />
                   {saving ? 'Creando...' : 'Crear Subusuario'}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
