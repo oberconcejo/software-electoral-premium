@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { useQueryCache } from '@/src/hooks/useQueryCache';
-import { CacheManager } from '@/src/lib/cacheManager';
+import { globalCache } from '@/src/lib/cacheManager';
 
 export interface Voter {
   id: string;
@@ -59,7 +59,7 @@ export function useVoters() {
       
       // Update cache
       if (cacheKey) {
-        CacheManager.invalidate(cacheKey);
+        globalCache.invalidate(cacheKey);
       }
       
       return data;
@@ -85,7 +85,7 @@ export function useVoters() {
 
       // Update cache
       if (cacheKey) {
-        CacheManager.invalidate(cacheKey);
+        globalCache.invalidate(cacheKey);
       }
 
       return data;
@@ -109,7 +109,7 @@ export function useVoters() {
 
       // Update cache
       if (cacheKey) {
-        CacheManager.invalidate(cacheKey);
+        globalCache.invalidate(cacheKey);
       }
 
       return true;

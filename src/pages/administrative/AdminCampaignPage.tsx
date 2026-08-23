@@ -1078,6 +1078,7 @@ export default function AdminCampaignPage() {
             </form>
           </div>
         </div>
+        </div>
       )}
     </div>
   );

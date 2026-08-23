@@ -787,6 +787,7 @@ export default function AdminRolesPage() {
                   </label>
                 </div>
               </div>
+              </div>
 
               {/* Botones de Acción */}
               <div className="pt-4 shrink-0 relative z-10">
@@ -801,6 +802,7 @@ export default function AdminRolesPage() {
               </div>
             </form>
           </div>
+        </div>
         </div>
       )}
 

@@ -781,190 +781,211 @@ export default function AdminLeadersVotersPage() {
 
       {/* Create Voter Modal */}
       {isVoterModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-y-auto">
-          <div className="relative w-full max-w-5xl flex-shrink-0 my-auto">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+          <div className="relative w-full max-w-7xl w-[95vw] h-[95vh] flex flex-col bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-[32px] shadow-2xl overflow-hidden">
             {/* Glowing background highlights behind card */}
-            <div className="absolute w-[350px] h-[350px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -translate-y-12" />
-            <div className="absolute w-[250px] h-[250px] bg-teal-500/5 rounded-full blur-3xl pointer-events-none translate-x-32 translate-y-32" />
+            <div className="absolute w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none -translate-y-24 -translate-x-24" />
+            <div className="absolute w-[400px] h-[400px] bg-teal-500/5 rounded-full blur-[100px] pointer-events-none bottom-0 right-0 translate-x-32 translate-y-32" />
+            {/* Subtle Grid Pattern Overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:28px_28px] opacity-15 pointer-events-none" />
 
-            <div className="bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-[32px] p-6 sm:p-8 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_50px_rgba(16,185,129,0.05)] relative overflow-hidden flex flex-col max-h-[90vh]">
-              {/* Subtle Grid Pattern Overlay */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:28px_28px] opacity-15 pointer-events-none" />
-              
-              <button onClick={() => setIsVoterModalOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors z-20">
-                <X className="w-6 h-6" />
-              </button>
-
-              <div className="text-center space-y-2 relative z-10 shrink-0">
-                <div className="inline-flex p-3.5 bg-gradient-to-tr from-emerald-500 to-teal-400 text-white rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.2)] mb-2">
-                  <Vote className="w-7 h-7" />
+            {/* Header */}
+            <div className="relative z-10 flex items-center justify-between px-8 py-6 border-b border-white/10 bg-slate-900/50">
+              <div className="flex items-center gap-4">
+                <div className="inline-flex p-3 bg-gradient-to-tr from-emerald-500 to-teal-500 text-white rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                  <Vote className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   Registrar Nuevo Votante
                 </h3>
               </div>
+              <button onClick={() => setIsVoterModalOpen(false)} className="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-xl">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
-            {message && (
-              <div className={`mx-6 mt-6 p-4 rounded-xl text-sm flex items-center gap-3 shrink-0 ${
-                message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-              }`}>
-                {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                {message.text}
-              </div>
-            )}
+            {/* Body */}
+            <div className="relative z-10 flex-1 overflow-y-auto p-8">
+              {message && (
+                <div className={`p-4 mb-6 rounded-2xl text-sm flex items-center gap-3 shadow-lg ${
+                  message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                }`}>
+                  {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                  {message.text}
+                </div>
+              )}
 
-            <form onSubmit={handleSaveVoter} className="flex flex-col flex-1 overflow-hidden">
-              <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Nombre Completo *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Ej. Ana Lucía Gómez"
-                      value={voterForm.nombre}
-                      onChange={(e) => setVoterForm({ ...voterForm, nombre: e.target.value })}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Cédula de Ciudadanía *</label>
-                    <div className="flex gap-2">
+              <form id="voter-form" onSubmit={handleSaveVoter} className="space-y-8">
+                
+                {/* Sección 1: Información Básica */}
+                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8">
+                  <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                    Información Básica
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Nombre Completo *</label>
                       <input
                         type="text"
                         required
-                        placeholder="Ej. 1098456123"
-                        value={voterForm.cedula}
-                        onChange={(e) => setVoterForm({ ...voterForm, cedula: e.target.value })}
-                        className="flex-1 bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none font-mono transition-colors"
+                        placeholder="Ej. Ana Lucía Gómez"
+                        value={voterForm.nombre}
+                        onChange={(e) => setVoterForm({ ...voterForm, nombre: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
                       />
-                      <button
-                        type="button"
-                        onClick={handleLookupVoterInfo}
-                        disabled={isQuerying}
-                        className="px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md disabled:opacity-50 transition-all"
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Cédula de Ciudadanía *</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          required
+                          placeholder="Ej. 1098456123"
+                          value={voterForm.cedula}
+                          onChange={(e) => setVoterForm({ ...voterForm, cedula: e.target.value })}
+                          className="flex-1 bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono transition-all"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleLookupVoterInfo}
+                          disabled={isQuerying || !voterForm.cedula}
+                          className="px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md disabled:opacity-50 transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
+                        >
+                          {isQuerying ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Consultar'}
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Teléfono *</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="Ej. 3109876543"
+                        value={voterForm.telefono}
+                        onChange={(e) => setVoterForm({ ...voterForm, telefono: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Correo Electrónico</label>
+                      <input
+                        type="email"
+                        placeholder="correo@ejemplo.com"
+                        value={voterForm.email}
+                        onChange={(e) => setVoterForm({ ...voterForm, email: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Líder Asignado</label>
+                      <select
+                        value={voterForm.liderId}
+                        onChange={(e) => setVoterForm({ ...voterForm, liderId: e.target.value })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
                       >
-                        {isQuerying ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Consultar'}
-                      </button>
+                        <option value="">Sin líder asignado (Registro Directo)</option>
+                        {leaders.map(l => (
+                          <option key={l.id} value={l.id}>{l.nombre} ({l.comuna || 'General'})</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-300 mb-2">Intención de Voto</label>
+                      <select
+                        value={voterForm.intencion}
+                        onChange={(e) => setVoterForm({ ...voterForm, intencion: e.target.value as any })}
+                        className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                      >
+                        <option value="Voto Seguro">Voto Seguro</option>
+                        <option value="Probable">Probable</option>
+                        <option value="Indeciso">Indeciso</option>
+                        <option value="En Contra">En Contra</option>
+                      </select>
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Teléfono</label>
-                    <input
-                      type="tel"
-                      placeholder="Ej. 3109876543"
-                      value={voterForm.telefono}
-                      onChange={(e) => setVoterForm({ ...voterForm, telefono: e.target.value })}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
-                    />
+                </div>
+
+                {/* Sección 2: Información Electoral */}
+                <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 sm:p-8 relative">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <h4 className="text-lg font-bold text-white flex items-center gap-2">
+                      <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
+                      Información Electoral
+                    </h4>
+                    <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-full">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Información obtenida mediante consulta electoral
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Intención de Voto</label>
-                    <select
-                      value={voterForm.intencion}
-                      onChange={(e) => setVoterForm({ ...voterForm, intencion: e.target.value as any })}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
-                    >
-                      <option value="Voto Seguro">Voto Seguro</option>
-                      <option value="Probable">Probable</option>
-                      <option value="Indeciso">Indeciso</option>
-                      <option value="En Contra">En Contra</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Circunscripción / Municipio *</label>
-                    <select
-                      required
-                      value={voterForm.zoneId}
-                      onChange={(e) => handleZoneChange('voter', e.target.value)}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
-                    >
-                      <option value="">Seleccione circunscripción</option>
-                      {zones.map(z => (
-                        <option key={z.id} value={z.id}>{z.nombre}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Corregimiento / Vereda *</label>
-                    <select
-                      required
-                      disabled={!voterForm.zoneId || loadingSubdivisions}
-                      value={voterForm.subdivisionId}
-                      onChange={(e) => setVoterForm({ ...voterForm, subdivisionId: e.target.value })}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {!voterForm.zoneId ? (
-                        <option value="">Seleccione primero la circunscripción</option>
-                      ) : loadingSubdivisions ? (
-                        <option value="">Cargando corregimientos y veredas...</option>
-                      ) : subdivisions.length === 0 ? (
-                        <option value="">No hay corregimientos o veredas disponibles</option>
-                      ) : (
-                        <>
-                          <option value="">Seleccione corregimiento o vereda</option>
-                          <optgroup label="Corregimientos">
-                            {subdivisions.filter(s => s.tipo === 'CORREGIMIENTO').map(s => (
-                              <option key={s.id} value={s.id}>{s.nombre}</option>
-                            ))}
-                          </optgroup>
-                          <optgroup label="Veredas">
-                            {subdivisions.filter(s => s.tipo === 'VEREDA').map(s => (
-                              <option key={s.id} value={s.id}>{s.nombre}</option>
-                            ))}
-                          </optgroup>
-                        </>
-                      )}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Puesto de Votación</label>
-                    <input
-                      type="text"
-                      placeholder="Ej. Escuela República de Colombia"
-                      value={voterForm.puesto}
-                      onChange={(e) => setVoterForm({ ...voterForm, puesto: e.target.value })}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Mesa</label>
-                    <input
-                      type="text"
-                      placeholder="Ej. Mesa 4"
-                      value={voterForm.mesa}
-                      onChange={(e) => setVoterForm({ ...voterForm, mesa: e.target.value })}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none font-mono transition-colors"
-                    />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-400 mb-2">Zona Electoral / Municipio</label>
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="No consultado"
+                        value={zones.find(z => z.id === voterForm.zoneId)?.nombre || ''}
+                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-slate-300 outline-none cursor-not-allowed opacity-80"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-400 mb-2">Corregimiento / Vereda</label>
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="No consultado"
+                        value={subdivisions.find(s => s.id === voterForm.subdivisionId)?.nombre || ''}
+                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-slate-300 outline-none cursor-not-allowed opacity-80"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-400 mb-2">Puesto de Votación</label>
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="No consultado"
+                        value={voterForm.puesto}
+                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-slate-300 outline-none cursor-not-allowed opacity-80"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-400 mb-2">Mesa Electoral</label>
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="No consultado"
+                        value={voterForm.mesa}
+                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-slate-300 outline-none cursor-not-allowed opacity-80 font-mono"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/5">
-                  <label className="block text-sm font-semibold text-slate-300 mb-2">Líder Asignado</label>
-                  <select
-                    value={voterForm.liderId}
-                    onChange={(e) => setVoterForm({ ...voterForm, liderId: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
-                  >
-                    <option value="">Sin líder asignado (Registro Directo)</option>
-                    {leaders.map(l => (
-                      <option key={l.id} value={l.id}>{l.nombre} ({l.comuna || 'General'})</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              </form>
+            </div>
 
-              <div className="pt-4 shrink-0 relative z-10">
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="w-full justify-center py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold flex items-center gap-2 shadow-lg hover:shadow-emerald-500/25 transition-all"
-                >
-                  <Save className="w-5 h-5" />
-                  {saving ? 'Guardando...' : 'Guardar Votante'}
-                </button>
-              </div>
-            </form>
+            {/* Footer with Actions */}
+            <div className="relative z-10 flex items-center justify-end gap-4 px-8 py-5 border-t border-white/10 bg-slate-900/50">
+              <button
+                type="button"
+                onClick={() => setIsVoterModalOpen(false)}
+                className="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                form="voter-form"
+                disabled={saving}
+                className="px-8 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold flex items-center gap-2 shadow-[0_10px_20px_-10px_rgba(16,185,129,0.5)] hover:shadow-[0_10px_20px_-10px_rgba(16,185,129,0.8)] transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <Save className="w-5 h-5" />
+                {saving ? 'Guardando...' : 'Guardar Votante'}
+              </button>
+            </div>
+            
           </div>
         </div>
       )}
